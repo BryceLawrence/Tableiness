@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.Mnemonic;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -397,6 +398,16 @@ public class TruthTableGenerator extends Application {
 		});
 	}
 	
+	private void submitExpression() {
+				Expression.setEnteredExpression(expression.getText());
+				//boolean valid = Expression.validate();
+				Expression.cleanup();
+				Expression.setFullExpression();
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.end(); 
+	}
+	
 	private void makeExpressionBar() {
 		Button submit = new Button("GO");
 		expression.setPrefWidth(500);
@@ -405,13 +416,7 @@ public class TruthTableGenerator extends Application {
 		submit.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				Expression.setEnteredExpression(expression.getText());
-				//boolean valid = Expression.validate();
-				Expression.cleanup();
-				Expression.setFullExpression();
-				expression.requestFocus();
-				expression.deselect(); 
-				expression.end(); 
+				submitExpression();
 			}
 		});
 	}
@@ -439,10 +444,20 @@ public class TruthTableGenerator extends Application {
 		
 		root.setTop(menuBar);
 		root.setCenter(centerArea);	
-
 		
 		primaryStage.setTitle("Truth Table Generator");
-		primaryStage.setScene(new Scene(root, 600, 600));
+		Scene scene = new Scene(root, 600, 600);
+		
+		scene.getAccelerators().put(
+			new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_ANY), 
+			new Runnable() {
+				@Override public void run() {
+					submitExpression();
+				}
+			}
+		);
+		
+		primaryStage.setScene(scene);
 		primaryStage.show();
 		
 		expression.requestFocus();
