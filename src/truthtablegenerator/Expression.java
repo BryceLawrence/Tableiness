@@ -110,7 +110,7 @@ public class Expression {
 				 steps.addAll(getParenthesesSteps(i +1));
 				 i += steps.get(steps.size() - 1).length() + 2; 
 				//get the size of the array-1 -> get last element -> get its length->
-				//add 2 for the missing parentheses->set the index to that spot, imediately after the right parentheses
+				//add 2 for the missing parentheses->set the index to that spot, imediately after the right parenthesis
 			 }
 		 }
 		 steps.add(workableExpression.substring(1, workableExpression.length()-1));
@@ -118,23 +118,47 @@ public class Expression {
 		 return steps;
 	 }
 	 
-	// private static ArrayList<String> getNotSteps
+	private static ArrayList<String> getNotSteps(String step) {
+		ArrayList <String> subSteps = new ArrayList<>();
+		for (int i = 0; i < step.length(); i++) {
+			if (step.charAt(i) == '~') {
+				if (Character.isLetter(step.charAt(i + 1))) {
+					subSteps.add(step.substring(i, i + 1));
+				}
+				if (step.charAt(i + 1) == '(') {
+					int unclosedCount = 1;
+					int skip = i + 2; // start the search on the character after the ( or 2 after the ~
+					for (; unclosedCount != 0; skip++) { //find the end of the parenthetical expression
+						if (step.charAt(skip) == '(') {
+							unclosedCount++;
+						}
+						if (step.charAt(skip) == ')') {
+							unclosedCount--;
+						}
+					}
+					subSteps.add(step.substring(i, skip + 2));
+					i += skip + 2; // skip to the closing parenthesis. (the pearenthetical expression plus the ~ and the opening parenthesis
+				}
+			}
+		}
+		return subSteps;
+	}
 	 
-	/* public static ArrayList<String> setLogicalSteps(ArrayList<String> steps) {
+	public static ArrayList<String> setLogicalSteps(ArrayList<String> steps) {
 		for (int i = 0; i < steps.size(); i++) {
-				 getNotSteps(String steps.get(i));
-				 getAndOrSteps(String steps.get(i));
-				 getImplySteps(String steps.get(i));
+			ArrayList <String> notSteps = getNotSteps(steps.get(i));
+			System.out.println(notSteps);
 		}
 		 return steps;
-	 }*/
+	 }
+	
 	public static void setFullExpression() {
 		// steps, answer
 		ArrayList <Character> vars = getVariables();
 		System.out.println(vars);
 		ArrayList<String> steps = getParenthesesSteps(1);
 		System.out.println(steps);
-		//steps = setLogicalSteps(steps);
+		steps = setLogicalSteps(steps);
 		
 	}
 	

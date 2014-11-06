@@ -307,42 +307,61 @@ public class TruthTableGenerator extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 				String exp = expression.getText();
-				expression.setText(exp + " /\\ ");
+				expression.setText(exp + " /\\ ");		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.end(); 
+
 			}
 		});
 		or.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
 				String exp = expression.getText();
-				expression.setText(exp + "\\/ ");
+				expression.setText(exp + " \\/ ");		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.end(); 
 			}
 		});
 		imply.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
 				String exp = expression.getText();
-				expression.setText(exp + " --> ");
+				expression.setText(exp + " --> ");		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.end(); 
 			}
 		});
 		not.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
 				String exp = expression.getText();
-				expression.setText(exp + " ! ");
+				expression.setText(exp + " ! ");		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.end(); 
 			}
 		});
 		left.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
 				String exp = expression.getText();
-				expression.setText(exp + " ( ");
+				expression.setText(exp + " ( ");		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.end(); 
 			}
 		});
 		right.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
 				String exp = expression.getText();
-				expression.setText(exp + " ) ");
+				expression.setText(exp + " ) ");		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.end(); 
 			}
 		});
 		speedButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -354,7 +373,10 @@ public class TruthTableGenerator extends Application {
 				} else {
 					outputSpeed = "Batch Entry";
 					speedButton.setText(outputSpeed);
-				}
+				}		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.end(); 
 			}
 		});
 		
@@ -367,7 +389,10 @@ public class TruthTableGenerator extends Application {
 				} else {
 					outputMode = "Full View";
 					modeButton.setText(outputMode);
-				}
+				}		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.end(); 
 			}
 		});
 	}
@@ -384,11 +409,11 @@ public class TruthTableGenerator extends Application {
 				//boolean valid = Expression.validate();
 				Expression.cleanup();
 				Expression.setFullExpression();
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.end(); 
 			}
 		});
-		
-		
-		//add logic
 	}
 	
 	/**
@@ -413,11 +438,16 @@ public class TruthTableGenerator extends Application {
 		makeCenterArea();
 		
 		root.setTop(menuBar);
-		root.setCenter(centerArea);
+		root.setCenter(centerArea);	
+
 		
 		primaryStage.setTitle("Truth Table Generator");
 		primaryStage.setScene(new Scene(root, 600, 600));
 		primaryStage.show();
+		
+		expression.requestFocus();
+		expression.deselect(); 
+		expression.end(); 
 	}
 
 	/**
