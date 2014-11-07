@@ -12,6 +12,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -439,6 +440,7 @@ public class TruthTableGenerator extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		
+		primaryStage.getIcons().add(new Image("file:src\\truthtablegenerator\\icon.png"));
 		makeMenuBar(primaryStage);
 		makeCenterArea();
 		
