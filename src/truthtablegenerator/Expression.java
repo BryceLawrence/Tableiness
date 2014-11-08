@@ -8,14 +8,19 @@ import java.util.List;
 /**
  * The Expression class. Holds the entered Expression, validates it, and does boolean algebra on it.
  * A Singleton Class.
- * @author McAllister, ...
  */
 public class Expression {
-	private static final Expression expression = new Expression();
+	private static final Expression expression = new Expression(); // Eager singleton, NOT threadsafe
 	private static String enteredExpression = null;
 	private static String workableExpression = null;
 	private static int size = 0;
 	private static List <String> variableList = new ArrayList<>();
+	private static List <String> steps = new ArrayList<>();
+	private static List <String> fullExpression = new ArrayList<>();
+	
+	/**
+	 * A Singleton constructor
+	 */
 	private Expression() {
 	}
 	
@@ -39,7 +44,8 @@ public class Expression {
 			workableExpression = workableExpression.replaceAll("\\\\/","+");
 			workableExpression = workableExpression.replaceAll("/\\\\","*");
 			workableExpression = workableExpression.replaceAll("!","~");
-			workableExpression = "@" + workableExpression + "@";
+			workableExpression = "@" + workableExpression + "@"; // used for validation to prevent null pointer issues
+			// removed in getParentheticalSteps
 		}
 	}
 	
@@ -82,14 +88,17 @@ public class Expression {
 		return unclosedCount;
 	}
 	
-	
-	 private static ArrayList<Character> getVariables() {
-		ArrayList <Character> variables = new ArrayList<>();
+	/**
+	 * Determines what variables are in the expression and returns a list of them in Half-As-Fast format
+	 * @return the variables in Half-As-Fast format
+	 */
+	 private static List<String> calculateVariables() {
+		List <Character> variables = new ArrayList<>();
 		for( int i = workableExpression.length() - 1; i > 0 ; i--) { // first and last elements are just placeholder "@" skip them
 			if (Character.isLetter(workableExpression.charAt(i))) {
 				boolean add = true;
 				for (int j = 0; j < variables.size(); j++) {
-					if (workableExpression.charAt(i) == variables.get(j)) { // the string is only 1 long so 0 is the whole string
+					if (workableExpression.charAt(i) == variables.get(j)) {
 						add = false;
 					}
 				}
@@ -98,26 +107,37 @@ public class Expression {
 				}
 			}
 		}
-		Collections.reverse(variables); // reverse the order so it will be in compact form
-		return variables;
+		Collections.reverse(variables); // reverse the order so it will be in compact form going forwards not backwards
+		//convert the list of chars to a list of strings of length one
+		List<String> sVariables = new ArrayList<>();
+		for (Character variable : variables) {
+			sVariables.add(variable.toString());
+		}
+		// return the string list
+		return sVariables;
 	}
-	 
-	 private static ArrayList<String> getParenthesesSteps(int startPoint) {
-		ArrayList <String> steps = new ArrayList<>();
-		for (int i = startPoint; i < workableExpression.length() - 1; i++) {
+	
+	/**
+	 * Recursively finds all parenthetical ParentheticalSteps and returns them in the logical order of operations (OoO) (inner first, then left to right)
+	 * @param startPoint The point to start the search at. The initial call should be 0.
+	 * @return all parenthetical ParentheticalSteps in OoO
+	 */
+	private static List<String> calculateParenthesesSteps(int startPoint) {
+		List <String> steps = new ArrayList<>();
+		for (int i = startPoint; i < workableExpression.length(); i++) {
 			if (workableExpression.charAt(i) == ')') {
-				steps.add(workableExpression.substring(startPoint, i));
-				return steps;
+				steps.add(workableExpression.substring(startPoint, i)); // that is the end of this step
+				return steps; // return it to the caller (the last calculateParenthesesSteps), 
 			}
 			if (workableExpression.charAt(i) == '(') {
-				steps.addAll(getParenthesesSteps(i +1));
+				steps.addAll(calculateParenthesesSteps(i +1));  // recursivly find the closing parenthesis
 				i += steps.get(steps.size() - 1).length() + 1; 
-			//get the size of the array-1 -> get last element -> get its length->
-			//add 1 for the missing start parenthesis->set the index to that closing parenthesis, which will then move forward 
-			// when i++ happens
+				//get the size of the array - 1 -> get last element -> get its length->
+				//add 1 for the missing start parenthesis -> sets the index to that closing parenthesis, 
+				//which will then move forward when i++ happens
 			}
 		}
-		steps.add(workableExpression.substring(1, workableExpression.length()-1));
+		steps.add(workableExpression.substring(1, workableExpression.length() - 1));
 		//the full expression minus the 2 "@"
 		return steps;
 	}
@@ -145,28 +165,27 @@ public class Expression {
 	 }
 	 
 	/**
-	 * Given a String, find all NOT steps in it.
-	 * @param step the step to search for not steps
-	 * @return a list of the steps found in left to right order
+	 * Given a String, find all NOT ParentheticalSteps in it.
+	 * @param step the step to search for not ParentheticalSteps
+	 * @return a list of the ParentheticalSteps found in left to right order
 	 */
-	private static ArrayList<String> getNotSteps(String step) {
-		ArrayList <String> subSteps = new ArrayList<>();
+	private static List<String> calculateNotSteps(String step) {
+		List <String> subSteps = new ArrayList<>();
 		for (int i = 0; i < step.length(); i++) {
 			if (step.charAt(i) == '~') {
 				int chain = 0; // reset each time through the loop. 
 				if (step.charAt(i + 1) == '~') {
 					// if the next item is a ~ increase the chain count count the number of ~ in a row
-					for (; step.charAt(i + chain + 1) == '~'; chain++) {}
+					for (; step.charAt(i + chain + 1) == '~'; chain++) {} // repeat until not ~ anymore
 					i += chain; // skip that far ahead
-					System.out.println(chain);
 				}
-				if (Character.isLetter(step.charAt(i + 1))) {
-					subSteps.add(step.substring(i, i + 2));
+				if (Character.isLetter(step.charAt(i + 1))) { // if the next character is a letter
+					subSteps.add(step.substring(i, i + 2)); // add it to our list
 					for (; chain > 0; chain--) { // if there was a skipped chain of ~ add in a element for each skipped ~ that is the a ~ plus the last entered element
 						subSteps.add("~" + subSteps.get(subSteps.size() - 1));
 					}
 				} else { // a "!(...)"
-					int skip = findClosingParenthesis(step, i + 1) + 1; // find the closing ')' and increment by one;
+					int skip = findClosingParenthesis(step, i + 1) + 1; // find the closing ')' and increment by one; i+1 is the (
 					subSteps.add(step.substring(i, skip));
 					for (; chain > 0; chain--) { // if there was a skipped chain of ~ add in a element for each skipped ~ that is
 						// the a ~ plus the last entered element
@@ -175,70 +194,96 @@ public class Expression {
 					i = skip; // skip to the closing parenthesis. (the pearenthetical expression plus the ~ and the opening parenthesis
 				}
 			} else if(step.charAt(i) == '(') { // we dont want to seach in a layer that was already evaluated
-				int skip = findClosingParenthesis(step, i) + 1; // find the closing ')' and increment by one;
-				i = skip;
+				i = findClosingParenthesis(step, i) + 1; // find the closing ')' and increment by one;
 			}
 		}
 		return subSteps;
 	}
 	
 	/**
-	 * Given a String, find all ANDs statements
+	 * Given a String, find all (Insert Binary Logic Operator Here) statements
 	 * @param step The String to parse
 	 * @param target The operand to look for
-	 * @return a list of all steps found, from left to right
+	 * @return a list of all ParentheticalSteps found, from left to right
 	 */
-	private static ArrayList<String> getBinarySteps(String step, char target) {
-		ArrayList <String> subSteps = new ArrayList<>();
-		int lastStartPoint = 0; //there should be NO implies that are not in parentheses in this step
-		for (int i = 0; i < step.length(); i++) {
-			if (target == '*') { 
+	private static List<String> calculateBinarySteps(String step, char target) {
+		List <String> subSteps = new ArrayList<>();
+		int lastStartPoint = 0; // the start point for the substrings is the beginning 
+		/*
+		IMPORTANT: 
+		An operator step should NEVER contain another operator of lower precidence that is not within parenthesis of a higher level of precidence
+			examples when evaluating ANDs:
+			p /\ q				the step is p /\ q
+			p \/ q /\ r			the step is q /\ r 
+			p /\ q \/ r			the step is p /\ q
+			p \/ q /\ r \/ s	the step is q /\ r
+			(p \/ q) /\ r		the step is (p \/ q) /\ r
+			p /\ (q \/ r)		the step is p /\ (q \/ r)
+		An operator step SHOULD contain all operators of higher precidence in its step
+			examples when evaluating ORs:
+			p \/ q				the step is p \/ q
+			p \/ q /\ r			the step is p \/ q /\ r
+			p /\ q \/ r			the step is p /\ q \/ r
+			p /\ q \/ r /\ s	the step is p /\ q \/ r /\ s
+		*/
+		for (int i = 0; i < step.length(); i++) { 
+			if (target == '*') { //if we are searching for ANDS, and we run into an OR, IMPLY, or IFF
 				if (step.charAt(i) == '<' || step.charAt(i) == '>' || step.charAt(i) == '+') {
-					lastStartPoint = i + 1;
+					lastStartPoint = i + 1; // set the lastStartPoint to the character after that OR, IMPLY, or IFF
 				}
-			}else if (target == '+') {
+			}else if (target == '+') { //if we are searching for ORs, and we run into an IMPLY or an IFF
 				if (step.charAt(i) == '<' || step.charAt(i) == '>') {
-					lastStartPoint = i + 1;
+					lastStartPoint = i + 1; // set the lastStartPoint to the character after that IMPLY or IFF
 				}
-			} else if (target == '>') {
+			} else if (target == '>') { //if we are searching for IMPLIES, and we run into an IFF
 				if (step.charAt(i) == '<') {
-					lastStartPoint = i + 1;
+					lastStartPoint = i + 1; // set the lastStartPoint to the character after that IFF
 				}
 			}
+			//note IFF has lowest precidence, so it will always include everything from the beginning
 			if (step.charAt(i) == target) {
 				i++;//move forward one and begin the search for a terminating character (equal or lower precidence)
-				while (i < step.length()) {
-					if (step.charAt(i) == '(') {
-						i = findClosingParenthesis(step, i); // find the closing ')' and increment by one;
+				while (i < step.length()) { // search to the end.
+				/*
+				NOTE :
+				on this step, search forward until a operator of EQUAL or LOWER precidence is found and stop there. Example:
+				p /\ q /\ r				has two AND steps		p /\ q 
+										and							p /\ q /\ r	
+				p \/ q /\ r \/ s		has two OR steps		p \/ q /\ r 
+										and							p \/ q /\ r \/ s
+				*/
+					if (step.charAt(i) == '(') { // if a ( is found, dont evaluate its innards
+						i = findClosingParenthesis(step, i); // find the closing ')' and move to it
 					} 
-					if (target == '*') { 
+					if (target == '*') { // for ANDs go until an AND, OR, IMPLY, or IFF
 						if (step.charAt(i) == '<' || step.charAt(i) == '>' || step.charAt(i) == '+' || step.charAt(i) == '*') {
-							subSteps.add(step.substring(lastStartPoint, i));
-							i--;
-							break;
+							subSteps.add(step.substring(lastStartPoint, i)); 
+							i--; // move back one so we will ++ to the new operator
+							break; // exit the while loop
 						}
-					}else if (target == '+') {
+					} else if (target == '+') { // for ORs go until an OR, IMPLY, or IFF
 						if (step.charAt(i) == '<' || step.charAt(i) == '>' || step.charAt(i) == '+') {
 							subSteps.add(step.substring(lastStartPoint, i));
-							i--;
-							break;
+							i--; // move back one so we will ++ to the new operator
+							break; // exit the while loop
 						}
-					} else if (target == '>') {
+					} else if (target == '>') { // for IMPLIES go until an IMPLY, or IFF
 						if (step.charAt(i) == '<' || step.charAt(i) == '>') {
 							subSteps.add(step.substring(lastStartPoint, i));
-							i--;
-							break;
+							i--; // move back one so we will ++ to the new operator
+							break; // exit the while loop
 						}
-					} else if (target == '<') {
+					} else if (target == '<') { // for IFFs go until another IFF
 						if (step.charAt(i) == '<') {
 							subSteps.add(step.substring(lastStartPoint, i));
-							i--;
-							break;
+							i--; // move back one so we will ++ to the new operator
+							break; // exit the while loop
 						}
 					}
-					i++;
+					i++; 
 				}
-				if (i == step.length()) {
+				if (i == step.length()) { // if we reached the end of the step in the while loop, nothing was added, so add everything
+					// from the lastStartPoint to the end
 					subSteps.add(step.substring(lastStartPoint, i));
 				}
 			}
@@ -246,29 +291,34 @@ public class Expression {
 		return subSteps;
 	}
 	
-	public static ArrayList<String> setLogicalSteps(ArrayList<String> parentheticalSteps) {
+	/**
+	 * For Each parenthetical step, Sets all logical ParentheticalSteps (~,/\, \/,-->, and &lt:->).
+	 * @param parentheticalSteps the ParentheticalSteps to walk through
+	 * @return the list of ParentheticalSteps in Order of Operations
+	 */
+	public static List<String> calculateLogicalSteps(List<String> parentheticalSteps) {
 		//System.out.println("LOGICAL STEPS");
-		ArrayList<String> steps = new ArrayList<>();
+		List<String> steps = new ArrayList<>();
 		for (int i = 0; i < parentheticalSteps.size(); i++) {
-		//	calculate the steps for this STEP 
+		//	calculate the ParentheticalSteps for this STEP 
 			System.out.println("	STEP " +( i + 1));
-			ArrayList <String> notSteps = getNotSteps(parentheticalSteps.get(i));
+			List <String> notSteps = calculateNotSteps(parentheticalSteps.get(i));
 			System.out.println("	NOT STEPS");
 			System.out.println(notSteps);
-			ArrayList <String> andSteps = getBinarySteps(parentheticalSteps.get(i), '*');
+			List <String> andSteps = calculateBinarySteps(parentheticalSteps.get(i), '*');
 			System.out.println("	AND STEPS");
 			System.out.println(andSteps);
-			ArrayList <String> orSteps = getBinarySteps(parentheticalSteps.get(i), '+');
+			List <String> orSteps = calculateBinarySteps(parentheticalSteps.get(i), '+');
 			System.out.println("	OR STEPS");
 			System.out.println(orSteps);
-			ArrayList <String> impliesSteps = getBinarySteps(parentheticalSteps.get(i), '>');
+			List <String> impliesSteps = calculateBinarySteps(parentheticalSteps.get(i), '>');
 			System.out.println("	IMPLY STEPS");
 			System.out.println(impliesSteps);
-			ArrayList <String> iffSteps = getBinarySteps(parentheticalSteps.get(i), '<');
+			List <String> iffSteps = calculateBinarySteps(parentheticalSteps.get(i), '<');
 			System.out.println("	IFF STEPS");
 			System.out.println(iffSteps);
 			
-			//add the steps calculated in order of operations, then move i forward the muber of steps added
+			//add the ParentheticalSteps calculated in order of operations, then move i forward the muber of ParentheticalSteps added
 			steps.addAll(notSteps);
 			steps.addAll(andSteps);
 			steps.addAll(orSteps);
@@ -278,22 +328,32 @@ public class Expression {
 		 return steps;
 	 }
 	
+	/**
+	 * Evaluates workable expression, finding all variables, 
+	 */
 	public static void setFullExpression() {
-		// steps, answer
-		ArrayList <Character> vars = getVariables();
-		System.out.println("VARIABLES");
-		System.out.println(vars);
-		ArrayList<String> steps = getParenthesesSteps(1);
-		System.out.println("PARENTHETICAL STEPS");
-		System.out.println(steps);
-		ArrayList<String> logicalSteps = setLogicalSteps(steps);
-		System.out.println("ALL STEPS");
-		System.out.println(logicalSteps);
+		//find all variables
+		List <String> variables = calculateVariables();
+			System.out.println("	VARIABLES");
+			System.out.println(variables);
+		variableList.addAll(variables);
+		List<String> parentheticalSteps = calculateParenthesesSteps(1);
+			System.out.println("	PARENTHETICAL STEPS");
+			System.out.println(parentheticalSteps);
+		List<String> logicalSteps = calculateLogicalSteps(parentheticalSteps);
+			System.out.println("	ALL STEPS");
+			System.out.println(logicalSteps);
+		steps.addAll(logicalSteps);
 		
+		fullExpression.addAll(variableList);
+		fullExpression.addAll(steps);
+			System.out.println("	FULL EXPRESSION");
+			System.out.println(fullExpression);
 	}
 	
+	/* Is this NOT just the workable expression without the @s
 	public static void setCompactExpression() {
-	}
+	}*/
 
 	public static List<String> getFullExpression() {
 		return null;
@@ -302,13 +362,4 @@ public class Expression {
 	public static String getCompactExpression() {
 		return null;
 	}
-	
-	public static String evaluateFullExpression(int row) {
-		return null;
-	}
-	 
-	public static String evaluateCompactExpression(int row) {
-		return null;
-	}
-	
 }

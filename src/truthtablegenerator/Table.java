@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
- * @author McAllister
+ * 
  */
 public class Table {
 	private List <Column> columns = new ArrayList<>();
