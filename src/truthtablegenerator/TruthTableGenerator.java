@@ -440,7 +440,7 @@ public class TruthTableGenerator extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		
-		primaryStage.getIcons().add(new Image("file:src\\truthtablegenerator\\icon.png")); 
+		primaryStage.getIcons().addAll(new Image("file:src\\truthtablegenerator\\icon.png"), new Image("file:src\\truthtablegenerator\\icon.png")); 
 		makeMenuBar(primaryStage);
 		makeCenterArea();
 		

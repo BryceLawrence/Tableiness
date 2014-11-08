@@ -125,8 +125,21 @@ public class Expression {
 		ArrayList <String> subSteps = new ArrayList<>();
 		for (int i = 0; i < step.length(); i++) {
 			if (step.charAt(i) == '~') {
+				int chain = 0;
+				if (step.charAt(i + 1) == '~') {
+					for (; step.charAt(i + chain + 1) == '~'; chain++) { // if the next item is a ~ increase the chain count
+						System.out.println(chain);
+					} // count the number of ~ in a row
+					System.out.println(chain);
+					i += chain; // skip that far ahead
+					System.out.println(i);
+				}
 				if (Character.isLetter(step.charAt(i + 1))) {
 					subSteps.add(step.substring(i, i + 2));
+					for (; chain > 0; chain--) { // if there was a skipped chain of ~ add in a element for each skipped ~ that is
+						// the a ~ plus the last entered element
+						subSteps.add("~" + subSteps.get(subSteps.size() - 1));
+					}
 				} else { 
 					int unclosedCount = 1;
 					int skip = i + 2; // start the search on the character after the ( or 2 after the ~
@@ -142,6 +155,10 @@ public class Expression {
 						end = step.length();
 					}
 					subSteps.add(step.substring(i, end));
+					for (; chain > 0; chain--) { // if there was a skipped chain of ~ add in a element for each skipped ~ that is
+						// the a ~ plus the last entered element
+						subSteps.add("~" + subSteps.get(subSteps.size() - 1));
+					}
 					i = i + skip; // skip to the closing parenthesis. (the pearenthetical expression plus the ~ and the opening parenthesis
 				}
 			} else if(step.charAt(i) == '(') {
