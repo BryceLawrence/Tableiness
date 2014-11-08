@@ -14,6 +14,8 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -47,6 +49,7 @@ public class TruthTableGenerator extends Application {
 	private String outputSpeed = new String("Batch Entry");
 	private String outputMode = new String("Compact View");
 	
+	int caretLocation;
 	/**
 	 *	Create an Error Box when user messes up
 	 * @param errorText the string to display in the error box generated
@@ -299,62 +302,73 @@ public class TruthTableGenerator extends Application {
 		and.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				String exp = expression.getText();
-				expression.setText(exp + " /\\ ");		
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + " /\\ " + exp2);
+				caretLocation += 4;
 				expression.requestFocus();
 				expression.deselect(); 
-				expression.end(); 
-
+				expression.positionCaret(caretLocation);
 			}
 		});
 		or.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				String exp = expression.getText();
-				expression.setText(exp + " \\/ ");		
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + " \\/ " + exp2);
+				caretLocation += 4;
 				expression.requestFocus();
 				expression.deselect(); 
-				expression.end(); 
+				expression.positionCaret(caretLocation);
 			}
 		});
 		imply.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				String exp = expression.getText();
-				expression.setText(exp + " --> ");		
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + " --> " + exp2);
+				caretLocation += 5;
 				expression.requestFocus();
 				expression.deselect(); 
-				expression.end(); 
+				expression.positionCaret(caretLocation);
 			}
 		});
 		not.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				String exp = expression.getText();
-				expression.setText(exp + " ! ");		
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + " ~" + exp2);
+				caretLocation += 2;
 				expression.requestFocus();
 				expression.deselect(); 
-				expression.end(); 
+				expression.positionCaret(caretLocation);
 			}
 		});
 		left.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				String exp = expression.getText();
-				expression.setText(exp + " ( ");		
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + " (" + exp2);
+				caretLocation += 2;
 				expression.requestFocus();
 				expression.deselect(); 
-				expression.end(); 
+				expression.positionCaret(caretLocation);
 			}
 		});
 		right.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				String exp = expression.getText();
-				expression.setText(exp + " ) ");		
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + ") " + exp2);
+				caretLocation += 2;
 				expression.requestFocus();
 				expression.deselect(); 
-				expression.end(); 
+				expression.positionCaret(caretLocation);
 			}
 		});
 		speedButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -369,7 +383,7 @@ public class TruthTableGenerator extends Application {
 				}		
 				expression.requestFocus();
 				expression.deselect(); 
-				expression.end(); 
+				expression.positionCaret(caretLocation);
 			}
 		});
 		
@@ -385,7 +399,7 @@ public class TruthTableGenerator extends Application {
 				}		
 				expression.requestFocus();
 				expression.deselect(); 
-				expression.end(); 
+				expression.positionCaret(caretLocation);
 			}
 		});
 	}
@@ -397,13 +411,28 @@ public class TruthTableGenerator extends Application {
 				Expression.setFullExpression();
 				expression.requestFocus();
 				expression.deselect(); 
-				expression.end(); 
+				expression.positionCaret(caretLocation);
 	}
 	
 	private void makeExpressionBar() {
 		Button submit = new Button("GO");
 		expression.setPrefWidth(500);
 		expressionRow.getChildren().addAll(expression, submit);
+		
+		expression.setOnKeyReleased(new EventHandler<KeyEvent>() {
+			@Override
+			public void handle(KeyEvent event) {
+				caretLocation = expression.getCaretPosition();
+			}
+		});
+		
+		expression.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				caretLocation = expression.getCaretPosition();
+			}
+		});
+		
 		
 		submit.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -430,6 +459,7 @@ public class TruthTableGenerator extends Application {
 	 */
 	@Override
 	public void start(Stage primaryStage) {
+		caretLocation = 0;
 		
 		primaryStage.getIcons().addAll(new Image("file:src\\truthtablegenerator\\icon.png"), new Image("file:src\\truthtablegenerator\\icon.png")); 
 		makeMenuBar(primaryStage);
