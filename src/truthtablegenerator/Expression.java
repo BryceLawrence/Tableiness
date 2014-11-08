@@ -35,6 +35,7 @@ public class Expression {
 			workableExpression = enteredExpression.toLowerCase();
 			workableExpression = workableExpression.replaceAll("\\s","");
 			workableExpression = workableExpression.replaceAll("-->",">");
+			workableExpression = workableExpression.replaceAll("<->","<");
 			workableExpression = workableExpression.replaceAll("\\\\/","+");
 			workableExpression = workableExpression.replaceAll("/\\\\","*");
 			workableExpression = workableExpression.replaceAll("!","~");
@@ -84,7 +85,7 @@ public class Expression {
 	
 	 private static ArrayList<Character> getVariables() {
 		ArrayList <Character> variables = new ArrayList<>();
-		for( int i = workableExpression.length() - 1; i > 0 ; i--) { // first and last elements are just placeholder "@" skipp them
+		for( int i = workableExpression.length() - 1; i > 0 ; i--) { // first and last elements are just placeholder "@" skip them
 			if (Character.isLetter(workableExpression.charAt(i))) {
 				boolean add = true;
 				for (int j = 0; j < variables.size(); j++) {
@@ -99,184 +100,147 @@ public class Expression {
 		}
 		Collections.reverse(variables); // reverse the order so it will be in compact form
 		return variables;
-	 }
+	}
 	 
 	 private static ArrayList<String> getParenthesesSteps(int startPoint) {
-		 ArrayList <String> steps = new ArrayList<>();
-		 for (int i = startPoint; i < workableExpression.length() - 1; i++) {
-			 if (workableExpression.charAt(i) == ')') {
-				 steps.add(workableExpression.substring(startPoint, i));
-				 return steps;
-			 }
-			  if (workableExpression.charAt(i) == '(') {
-				 steps.addAll(getParenthesesSteps(i +1));
-				 i += steps.get(steps.size() - 1).length() + 1; 
-				//get the size of the array-1 -> get last element -> get its length->
-				//add 1 for the missing start parenthesis->set the index to that closing parenthesis, which will then move forward 
-				 // when i++ happens
-			 }
-		 }
-		 steps.add(workableExpression.substring(1, workableExpression.length()-1));
-		 //the full expression minus the 2 "@"
-		 return steps;
+		ArrayList <String> steps = new ArrayList<>();
+		for (int i = startPoint; i < workableExpression.length() - 1; i++) {
+			if (workableExpression.charAt(i) == ')') {
+				steps.add(workableExpression.substring(startPoint, i));
+				return steps;
+			}
+			if (workableExpression.charAt(i) == '(') {
+				steps.addAll(getParenthesesSteps(i +1));
+				i += steps.get(steps.size() - 1).length() + 1; 
+			//get the size of the array-1 -> get last element -> get its length->
+			//add 1 for the missing start parenthesis->set the index to that closing parenthesis, which will then move forward 
+			// when i++ happens
+			}
+		}
+		steps.add(workableExpression.substring(1, workableExpression.length()-1));
+		//the full expression minus the 2 "@"
+		return steps;
+	}
+	 
+	/**
+	 * Given a string and the position of a opening '(', return the position of the closing ')'
+	 * @param step the string to search in.
+	 * @param startSearch the spot to start the search. Must be the starting open '(' character
+	 * @return the position of the closing ')'
+	 */
+	 private static int findClosingParenthesis(String step, int startSearch) {
+		int skip = startSearch + 1; // start on the char AFTER the starting '('
+		int unclosedCount = 1; //we skipped the starting '(' so start at one
+		while (unclosedCount != 0) { //find the end of the parenthetical expression
+			if (step.charAt(skip) == '(') {
+				unclosedCount++; // add a level
+			} else if (step.charAt(skip) == ')') {
+				unclosedCount--; // reduce a level
+			}
+			if (unclosedCount != 0) { //if we are not done increment. if we are, incrementing may move out of bounds
+				skip++;
+			}
+		}
+		return skip;
 	 }
 	 
+	/**
+	 * Given a String, find all NOT steps in it.
+	 * @param step the step to search for not steps
+	 * @return a list of the steps found in left to right order
+	 */
 	private static ArrayList<String> getNotSteps(String step) {
 		ArrayList <String> subSteps = new ArrayList<>();
 		for (int i = 0; i < step.length(); i++) {
 			if (step.charAt(i) == '~') {
-				int chain = 0;
+				int chain = 0; // reset each time through the loop. 
 				if (step.charAt(i + 1) == '~') {
-					for (; step.charAt(i + chain + 1) == '~'; chain++) { // if the next item is a ~ increase the chain count
-						System.out.println(chain);
-					} // count the number of ~ in a row
-					System.out.println(chain);
+					// if the next item is a ~ increase the chain count count the number of ~ in a row
+					for (; step.charAt(i + chain + 1) == '~'; chain++) {}
 					i += chain; // skip that far ahead
-					System.out.println(i);
+					System.out.println(chain);
 				}
 				if (Character.isLetter(step.charAt(i + 1))) {
 					subSteps.add(step.substring(i, i + 2));
+					for (; chain > 0; chain--) { // if there was a skipped chain of ~ add in a element for each skipped ~ that is the a ~ plus the last entered element
+						subSteps.add("~" + subSteps.get(subSteps.size() - 1));
+					}
+				} else { // a "!(...)"
+					int skip = findClosingParenthesis(step, i + 1) + 1; // find the closing ')' and increment by one;
+					subSteps.add(step.substring(i, skip));
 					for (; chain > 0; chain--) { // if there was a skipped chain of ~ add in a element for each skipped ~ that is
 						// the a ~ plus the last entered element
 						subSteps.add("~" + subSteps.get(subSteps.size() - 1));
 					}
-				} else { 
-					int unclosedCount = 1;
-					int skip = i + 2; // start the search on the character after the ( or 2 after the ~
-					for (; unclosedCount != 0; skip++) { //find the end of the parenthetical expression
-						if (step.charAt(skip) == '(') {
-							unclosedCount++;
-						} else if (step.charAt(skip) == ')') {
-							unclosedCount--;
-						}
-					}
-					int end = i + skip;
-					if (end > step.length()) {
-						end = step.length();
-					}
-					subSteps.add(step.substring(i, end));
-					for (; chain > 0; chain--) { // if there was a skipped chain of ~ add in a element for each skipped ~ that is
-						// the a ~ plus the last entered element
-						subSteps.add("~" + subSteps.get(subSteps.size() - 1));
-					}
-					i = i + skip; // skip to the closing parenthesis. (the pearenthetical expression plus the ~ and the opening parenthesis
+					i = skip; // skip to the closing parenthesis. (the pearenthetical expression plus the ~ and the opening parenthesis
 				}
-			} else if(step.charAt(i) == '(') {
-				int unclosedCount = 1;
-					int skip = i + 1; // start the search on the character after the ( or 2 after the ~
-					for (; unclosedCount != 0; skip++) { //find the end of the parenthetical expression
-						if (step.charAt(skip) == '(') {
-							unclosedCount++;
-						} else if (step.charAt(skip) == ')') {
-							unclosedCount--;
-						}
-					}
-					i = i + skip;
+			} else if(step.charAt(i) == '(') { // we dont want to seach in a layer that was already evaluated
+				int skip = findClosingParenthesis(step, i) + 1; // find the closing ')' and increment by one;
+				i = skip;
 			}
 		}
 		return subSteps;
 	}
 	
-	private static ArrayList<String> getAndOrSteps(String step) {
+	/**
+	 * Given a String, find all ANDs statements
+	 * @param step The String to parse
+	 * @param target The operand to look for
+	 * @return a list of all steps found, from left to right
+	 */
+	private static ArrayList<String> getBinarySteps(String step, char target) {
 		ArrayList <String> subSteps = new ArrayList<>();
-		int lastNonimplies = 0; //there should be NO implies that are not in parentheses in this step
+		int lastStartPoint = 0; //there should be NO implies that are not in parentheses in this step
 		for (int i = 0; i < step.length(); i++) {
-			if (step.charAt(i) == '>') {
-				lastNonimplies = i + 1;
+			if (target == '*') { 
+				if (step.charAt(i) == '<' || step.charAt(i) == '>' || step.charAt(i) == '+') {
+					lastStartPoint = i + 1;
+				}
+			}else if (target == '+') {
+				if (step.charAt(i) == '<' || step.charAt(i) == '>') {
+					lastStartPoint = i + 1;
+				}
+			} else if (target == '>') {
+				if (step.charAt(i) == '<') {
+					lastStartPoint = i + 1;
+				}
 			}
-			if (step.charAt(i) == '*' || step.charAt(i) == '+') {
-				if (Character.isLetter(step.charAt(i + 1))) {
-					subSteps.add(step.substring(lastNonimplies, i + 2));
-				} else if (step.charAt(i + 1) == '~' && Character.isLetter(step.charAt(i + 2))) {
-					subSteps.add(step.substring(lastNonimplies, i + 3));
-				} else {
-					int unclosedCount = 1;
-					int skip = i + 2; // start the search on the character after the ( or 2 after the +/*
-					if (step.charAt(i + 1) =='~') { // if it is a ~ add an extra skip
-						skip ++;
-					}
-					for (; unclosedCount != 0; skip++) { //find the end of the parenthetical expression
-						if (step.charAt(skip) == '(') {
-							unclosedCount++;
-						} else if (step.charAt(skip) == ')') {
-							unclosedCount--;
+			if (step.charAt(i) == target) {
+				i++;//move forward one and begin the search for a terminating character (equal or lower precidence)
+				while (i < step.length()) {
+					if (step.charAt(i) == '(') {
+						i = findClosingParenthesis(step, i); // find the closing ')' and increment by one;
+					} 
+					if (target == '*') { 
+						if (step.charAt(i) == '<' || step.charAt(i) == '>' || step.charAt(i) == '+' || step.charAt(i) == '*') {
+							subSteps.add(step.substring(lastStartPoint, i));
+							i--;
+							break;
 						}
-					}
-					int end = i + skip;
-					if (end > step.length()) {
-						end = step.length();
-					}
-					subSteps.add(step.substring(lastNonimplies, end));
-					i = i + skip; // skip to the closing parenthesis.
-				}
-			} else if(step.charAt(i) == '(') {
-				int unclosedCount = 1;
-				int skip = i + 1; // start the search on the character after the ( or 2 after the ~
-				for (; unclosedCount != 0; skip++) { //find the end of the parenthetical expression
-					if (step.charAt(skip) == '(') {
-						unclosedCount++;
-					} else if (step.charAt(skip) == ')') {
-						unclosedCount--;
-					}
-				}
-				i = i + skip - 1; // -1 so that it ends on the closing parenthesis and not the next symbol. i++ will move it to far if not -1
-			}
-		}
-		return subSteps;
-	}
-	 
-	private static ArrayList<String> getImpliesSteps(String step) {
-		ArrayList <String> subSteps = new ArrayList<>();
-		for (int i = 0; i < step.length(); i++) {
-			if (step.charAt(i) == '>') {
-				//if the next character is a letter or a ~ followed by a letter...
-				if (Character.isLetter(step.charAt(i + 1)) ||
-				   (step.charAt(i + 1) == '~' && Character.isLetter(step.charAt(i + 2)))) {
-					int end = i + 1;
-					//... find the end of expression or the next implies ...
-					for(;end < step.length(); end++) {
-						if (step.charAt(end) == '>') {
+					}else if (target == '+') {
+						if (step.charAt(i) == '<' || step.charAt(i) == '>' || step.charAt(i) == '+') {
+							subSteps.add(step.substring(lastStartPoint, i));
+							i--;
+							break;
+						}
+					} else if (target == '>') {
+						if (step.charAt(i) == '<' || step.charAt(i) == '>') {
+							subSteps.add(step.substring(lastStartPoint, i));
+							i--;
+							break;
+						}
+					} else if (target == '<') {
+						if (step.charAt(i) == '<') {
+							subSteps.add(step.substring(lastStartPoint, i));
+							i--;
 							break;
 						}
 					}
-					//... and add from beginning to end or next implies to subSteps
-					subSteps.add(step.substring(0, end));
-				} else {
-					int unclosedCount = 1;
-					int skip = i + 2; // start the search on the character after the ( or 2 after the +/*
-					if (step.charAt(i + 1) =='~') { // if it is a ~ add an extra skip
-						skip ++;
-					}
-					for (; unclosedCount != 0; skip++) { //find the end of the parenthetical expression
-						if (step.charAt(skip) == '(') {
-							unclosedCount++;
-						} else if (step.charAt(skip) == ')') {
-							unclosedCount--;
-						}
-					}
-					int end = i + skip;
-					if (end > step.length()) {
-						end = step.length();
-					}
-					for(;end < step.length(); end++) {
-						if (step.charAt(end) == '>') {
-							break;
-						}
-					}
-					subSteps.add(step.substring(0, end));
-					i = i + skip; // skip to the closing parenthesis.
+					i++;
 				}
-			} else if(step.charAt(i) == '(') {
-				int unclosedCount = 1;
-				int skip = i + 1; // start the search on the character after the ( or 2 after the ~
-				for (; unclosedCount != 0; skip++) { //find the end of the parenthetical expression
-					if (step.charAt(skip) == '(') {
-						unclosedCount++;
-					} else if (step.charAt(skip) == ')') {
-						unclosedCount--;
-					}
+				if (i == step.length()) {
+					subSteps.add(step.substring(lastStartPoint, i));
 				}
-				i = i + skip;
 			}
 		}
 		return subSteps;
@@ -291,17 +255,25 @@ public class Expression {
 			ArrayList <String> notSteps = getNotSteps(parentheticalSteps.get(i));
 			System.out.println("	NOT STEPS");
 			System.out.println(notSteps);
-			ArrayList <String> andOrSteps = getAndOrSteps(parentheticalSteps.get(i));
-			System.out.println("	AND/OR STEPS");
-			System.out.println(andOrSteps);
-			ArrayList <String> impliesSteps = getImpliesSteps(parentheticalSteps.get(i));
-			System.out.println("	IMPLIES STEPS");
+			ArrayList <String> andSteps = getBinarySteps(parentheticalSteps.get(i), '*');
+			System.out.println("	AND STEPS");
+			System.out.println(andSteps);
+			ArrayList <String> orSteps = getBinarySteps(parentheticalSteps.get(i), '+');
+			System.out.println("	OR STEPS");
+			System.out.println(orSteps);
+			ArrayList <String> impliesSteps = getBinarySteps(parentheticalSteps.get(i), '>');
+			System.out.println("	IMPLY STEPS");
 			System.out.println(impliesSteps);
+			ArrayList <String> iffSteps = getBinarySteps(parentheticalSteps.get(i), '<');
+			System.out.println("	IFF STEPS");
+			System.out.println(iffSteps);
 			
 			//add the steps calculated in order of operations, then move i forward the muber of steps added
 			steps.addAll(notSteps);
-			steps.addAll(andOrSteps);
+			steps.addAll(andSteps);
+			steps.addAll(orSteps);
 			steps.addAll(impliesSteps);
+			steps.addAll(iffSteps);
 		}
 		 return steps;
 	 }
