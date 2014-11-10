@@ -56,7 +56,12 @@ public class Expression {
 	public static boolean validate() { //needs to throw error codes for display
 		cleanup(); // prepares the expression to be worked on
 		if (invalidate(0) == 0) { // no open parentheses yet and start at spot 1. (0 is an "@")
-			// get size
+			//need to reset the lists so that they dont just stack onto old expressions
+			variableList.clear();
+			steps.clear();
+			fullExpression.clear();
+			cleanup();
+			setFullExpression();
 			return true;
 		}
 		return false; // note false is only if there are nonmatching parentheses. all other errors are thrown.
@@ -71,7 +76,8 @@ public class Expression {
 		setEnteredExpression(expression);
 		cleanup(); // prepares the expression to be worked on
 		if (invalidate(0) == 0) { // no open parentheses yet and start at spot 1. (0 is an "@")
-			// get sizereturn true;
+			// get size
+			return true;
 		}
 		return false; // note false is only if there are nonmatching parentheses. all other errors are thrown.
 	}
@@ -347,6 +353,9 @@ public class Expression {
 		
 		fullExpression.addAll(variableList);
 		fullExpression.addAll(steps);
+		System.out.println(steps);
+		System.out.println(variableList);
+		size = variables.size();
 			System.out.println("	FULL EXPRESSION");
 			System.out.println(fullExpression);
 	}
@@ -355,8 +364,11 @@ public class Expression {
 	public static void setCompactExpression() {
 	}*/
 
+	public static int getSize() {
+		return size;
+	}
 	public static List<String> getFullExpression() {
-		return null;
+		return fullExpression;
 	}
 	
 	public static String getCompactExpression() {

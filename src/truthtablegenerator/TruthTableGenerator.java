@@ -405,13 +405,15 @@ public class TruthTableGenerator extends Application {
 	}
 	
 	private void submitExpression() {
-				Expression.setEnteredExpression(expression.getText());
-				//boolean valid = Expression.validate();
-				Expression.cleanup();
-				Expression.setFullExpression();
-				expression.requestFocus();
-				expression.deselect(); 
-				expression.positionCaret(caretLocation);
+		Expression.setEnteredExpression(expression.getText());
+		if (Expression.validate()) {
+			Table t = new Table();
+			t.run();
+		}
+
+		expression.requestFocus();
+		expression.deselect(); 
+		expression.positionCaret(caretLocation);
 	}
 	
 	private void makeExpressionBar() {
