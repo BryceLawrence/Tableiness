@@ -156,3 +156,4 @@ public class BinaryMath {
 		return (Character.getNumericValue(LHS) == Character.getNumericValue(RHS)) ? 1 : 0; // must be equal
 	}
 }
+//
