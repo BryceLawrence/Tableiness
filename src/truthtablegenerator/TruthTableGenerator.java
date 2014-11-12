@@ -412,7 +412,7 @@ public class TruthTableGenerator extends Application {
             try {
                 if (Expression.validate()) {
                     Table t = new Table();
-                    //t.run();
+                    t.run();
                 }
             } catch (ValidationException ex) {
                 System.out.println(ex.getMessage());

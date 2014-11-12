@@ -1,4 +1,4 @@
- package truthtablegenerator;
+	 package truthtablegenerator;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
@@ -435,8 +435,6 @@ public class Expression {
 		
 		fullExpression.addAll(variableList);
 		fullExpression.addAll(steps);
-		System.out.println(steps);
-		System.out.println(variableList);
 		size = variables.size();
 			System.out.println("	FULL EXPRESSION");
 			System.out.println(fullExpression);

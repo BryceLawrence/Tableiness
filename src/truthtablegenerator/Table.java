@@ -18,10 +18,9 @@ public class Table {
 	
 	public void run() {
 		int tableSize = (int) Math.pow(2 ,Expression.getSize());
-		//for(int i = 0; i < tableSize; i++) {
-			//calcRow(i);
-		//}
-		calcRow(0);
+		for(int i = 0; i < tableSize; i++) {
+			calcRow(i);
+		}
 	}
 	
 	public void calcRow(int step) {
@@ -38,45 +37,44 @@ public class Table {
 		for (int i = 0; i < variableCount; i ++) {
 			results.add(Integer.parseInt(Character.toString(binaryStep.charAt(i))));
 		}
-		String phrase = null;
+		String phrase = steps.get(variableCount);
 		for (int i = variableCount; i < steps.size(); i++) {
-			System.out.println("STEP: " + steps.get(i));
+			phrase = steps.get(i);
 			for (int j = i - 1; j  >= variableCount; j--) {
 				if (steps.get(i).contains(steps.get(j))) {
-					System.out.println(steps.get(j));
 					// first try to replace surrounded in (); (a*b)*c, a*b wont be surrounded in () in last step so add it
-					phrase = steps.get(i).replace("(" + steps.get(j) + ")", Integer.toString(results.get(j)));
+					phrase = phrase.replace("(" + steps.get(j) + ")", Integer.toString(results.get(j)));
 					//then try to replace without (); a*b*c, doenst have () so try without
-					phrase = steps.get(i).replace(steps.get(j), Integer.toString(results.get(j)));
+					phrase = phrase.replace(steps.get(j), Integer.toString(results.get(j)));
 				}
 			}
 			for (int j = 0; j < variableCount; j++) {
 				phrase = phrase.replace(steps.get(j).charAt(0), binaryStep.charAt(j));
 			}
-			if (steps.get(i).length() == 2) {
-				results.add(BinaryMath.not(steps.get(i).charAt(1)));
+			if (phrase.length() == 2) {
+				results.add(BinaryMath.not(Character.getNumericValue(phrase.charAt(1))));
 			} else {
-				switch (steps.get(i).charAt(1)) {
+				switch (phrase.charAt(1)) {
 					case '*':
-						results.add(BinaryMath.and(Character.getNumericValue(steps.get(i).charAt(0)), 
-						Character.getNumericValue(steps.get(i).charAt(2))));
+						results.add(BinaryMath.and(Character.getNumericValue(phrase.charAt(0)), 
+						Character.getNumericValue(phrase.charAt(2))));
 						break;
 					case '+':
-						results.add(BinaryMath.or(Character.getNumericValue(steps.get(i).charAt(0)), 
-						Character.getNumericValue(steps.get(i).charAt(2))));
+						results.add(BinaryMath.or(Character.getNumericValue(phrase.charAt(0)), 
+						Character.getNumericValue(phrase.charAt(2))));
 						break;
 					case '>':
-						results.add(BinaryMath.implies(Character.getNumericValue(steps.get(i).charAt(0)), 
-						Character.getNumericValue(steps.get(i).charAt(2))));
+						results.add(BinaryMath.implies(Character.getNumericValue(phrase.charAt(0)), 
+						Character.getNumericValue(phrase.charAt(2))));
 						break;
 					case '<':
-						results.add(BinaryMath.iff(Character.getNumericValue(steps.get(i).charAt(0)), 
-						Character.getNumericValue(steps.get(i).charAt(2))));
+						results.add(BinaryMath.iff(Character.getNumericValue(phrase.charAt(0)), 
+						Character.getNumericValue(phrase.charAt(2))));
 						break;
 				}
 			}
 		}
-		System.out.println(phrase);
+		System.out.println(results);
 		/*
 		for each step x
 			for each prior step in reverse order y
