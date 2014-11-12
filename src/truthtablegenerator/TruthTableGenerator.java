@@ -1,6 +1,8 @@
 package truthtablegenerator;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -406,10 +408,15 @@ public class TruthTableGenerator extends Application {
 	
 	private void submitExpression() {
 		Expression.setEnteredExpression(expression.getText());
-		if (Expression.validate()) {
-			Table t = new Table();
-			//t.run();
-		}
+
+            try {
+                if (Expression.validate()) {
+                    Table t = new Table();
+                    //t.run();
+                }
+            } catch (ValidationException ex) {
+                System.out.println(ex.getMessage());
+            }
 
 		expression.requestFocus();
 		expression.deselect(); 
