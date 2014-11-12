@@ -409,11 +409,11 @@ public class TruthTableGenerator extends Application {
 	private void submitExpression() {
 		Expression.setEnteredExpression(expression.getText());
 
-            try {
-                if (Expression.validate()) {
-                    Table t = new Table();
-                    t.run();
-                }
+			try {
+				if (Expression.validate()) {
+					Table t = new Table();
+					t.makeFullTable();
+				}
             } catch (ValidationException ex) {
                 System.out.println(ex.getMessage());
             }

@@ -13,17 +13,40 @@ import java.util.List;
  * 
  */
 public class Table {
-	private List <Column> columns = new ArrayList<>();
-	private int size = 0;
+	private List<List <String>> table = new ArrayList<>();
 	
-	public void run() {
+	/**
+	 * Makes the full table row by row
+	 */
+	public void makeFullTable() {
 		int tableSize = (int) Math.pow(2 ,Expression.getSize());
+		table.clear();
+		table.add(Expression.getFullExpression());
 		for(int i = 0; i < tableSize; i++) {
-			calcRow(i);
+			calcFullRow(i);
+		}
+		for (List<String> row : table) {
+			System.out.println(row);
 		}
 	}
 	
-	public void calcRow(int step) {
+	/**
+	 * Gets the table 
+	 * The table is a two dimensional List, or a list of lists broken up by ROWS of elements
+	 * the first row is the expression, broken down to individual parts,
+	 * the rest of the rows are the results one character at a time.
+	 * @return table
+	 */
+	public List<List<String>> getFullTable() {
+		
+		return table;
+	}
+	
+	/**
+	 * Calculates a single row, and adds its result to the table
+	 * @param step the current row being calculated
+	 */
+	public void calcFullRow(int step) {
 		int variableCount = Expression.getSize();
 		
 		String binaryStep = Integer.toBinaryString(step);
@@ -32,8 +55,8 @@ public class Table {
 		}
 		
 		List <String> steps = new ArrayList<>(Expression.getFullExpression());
-		
 		List<Integer> results = new ArrayList<>();
+		
 		for (int i = 0; i < variableCount; i ++) {
 			results.add(Integer.parseInt(Character.toString(binaryStep.charAt(i))));
 		}
@@ -74,68 +97,11 @@ public class Table {
 				}
 			}
 		}
-		System.out.println(results);
-		/*
-		for each step x
-			for each prior step in reverse order y
-				if step contains stepY
-					replace stepX = (stepX-stepY)+resY
-			replace remaining variables with binary
-			evaluate step -> resX
-		*/
-
-		
-		/*
-		List <Integer> stepResults = new ArrayList<>();
-		String binaryStep = Integer.toBinaryString(step);
-		while (binaryStep.length() < variableCount) {
-			binaryStep = "0" + binaryStep;
+		List<String> stringResults  = new ArrayList<>();
+		for (int r : results) {
+			stringResults.add(Integer.toString(r));
 		}
-		List <String> steps = new ArrayList<>(Expression.getFullExpression());
-		for (int i = 0; i < variableCount; i ++) {
-			for (int j = steps.size() - 1; j  >= 0 + i; j--) {
-				steps.set(j, steps.get(j).replace("(" + steps.get(i) + ")", Character.toString(binaryStep.charAt(i))));
-				steps.set(j, steps.get(j).replace(steps.get(i), Character.toString(binaryStep.charAt(i))));
-			}
-		}
-		List<Integer> results = new ArrayList<>();
-		//start of the list with the variables
-		for (int i = 0; i < variableCount; i ++) {
-			results.add(Integer.parseInt(steps.get(i)));
-		}
-System.out.println();
-		List <String> steps2 =Expression.getFullExpression();
-		for (int i = variableCount; i < steps.size(); i ++) {
-System.out.println("Step: " + i);
-			for (int j = i - 1; j  >=  variableCount; j --) {
-				// replace all instances
-System.out.println(steps.get(i) + " Replace " + steps.get(j) + "with result = " + results.get(j));
-				steps.set(i, steps.get(i).replace(steps.get(j), Integer.toString(results.get(j))));
-			}
-			if (steps.get(i).length() == 2) {
-				results.add(BinaryMath.not(steps.get(i).charAt(1)));
-			} else {
-				switch (steps.get(i).charAt(1)) {
-					case '*':
-						results.add(BinaryMath.and(Character.getNumericValue(steps.get(i).charAt(0)), 
-						Character.getNumericValue(steps.get(i).charAt(2))));
-						break;
-					case '+':
-						results.add(BinaryMath.or(Character.getNumericValue(steps.get(i).charAt(0)), 
-						Character.getNumericValue(steps.get(i).charAt(2))));
-						break;
-					case '>':
-						results.add(BinaryMath.implies(Character.getNumericValue(steps.get(i).charAt(0)), 
-						Character.getNumericValue(steps.get(i).charAt(2))));
-						break;
-					case '<':
-						results.add(BinaryMath.iff(Character.getNumericValue(steps.get(i).charAt(0)), 
-						Character.getNumericValue(steps.get(i).charAt(2))));
-						break;
-				}
-			}
-		}
-		System.out.println(binaryStep + " = " + results.get(steps.size() - 1));*/
+		table.add(stringResults);
 	}
 }
 
