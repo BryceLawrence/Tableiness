@@ -53,14 +53,14 @@ public class Expression {
 	 * Validates the users Expression
 	 * @return true if valid, false if non-matching braces. throws operator/variable expressions
 	 */
-	public static boolean validate() { //needs to throw error codes for display
+	public static boolean validate() throws ValidationException { //needs to throw error codes for display
 		cleanup(); // prepares the expression to be worked on
 		if (invalidate(0) == 0) { // no open parentheses yet and start at spot 1. (0 is an "@")
 			//need to reset the lists so that they dont just stack onto old expressions
 			variableList.clear();
 			steps.clear();
 			fullExpression.clear();
-			cleanup();
+			//cleanup(); This was pointless.
 			setFullExpression();
 			return true;
 		}
@@ -72,7 +72,7 @@ public class Expression {
 	 * @param expression The string the user entered.
 	 * @return true if valid, false if non-matching braces. throws operator/variable expressions
 	 */
-	public static boolean validate(String expression) { //needs to throw error codes for display
+	public static boolean validate(String expression) throws ValidationException { //needs to throw error codes for display
 		setEnteredExpression(expression);
 		cleanup(); // prepares the expression to be worked on
 		if (invalidate(0) == 0) { // no open parentheses yet and start at spot 1. (0 is an "@")
@@ -89,9 +89,88 @@ public class Expression {
 	 * @param position the position in the String. Initial call should be 1
 	 * @return unclosedCount. If not 0, then the expression is invalid
 	 */
-	private static int invalidate(int unclosedCount) { //throws error codes
+	private static int invalidate(int unclosedCount) throws ValidationException{ //throws error codes
 		//insert code here	
-		return unclosedCount;
+            int pos;
+            // Note on position. Our string has an '@' at position 0, so the users
+            // first character is at our position 1. All validation errors will 
+            // return a postion indexed starting at 1.
+            int parCount = 0;
+            char checking;
+            char RHS;
+            
+            for (pos = 0; pos < workableExpression.length(); pos++) {
+                checking = workableExpression.charAt(pos);
+                //end of string
+                if (checking == '@'  && pos > 0) {
+                    if(parCount > 0) {
+                        throw new ValidationException("Too many open parentheses");
+                    }
+                    return parCount;
+                }
+            
+                RHS = workableExpression.charAt(pos + 1);
+                
+                // unbalanced parentheses
+                
+                
+                // No expression
+                if (checking == '@' && RHS == '@') {
+                   throw new ValidationException("Empty Logical Expression");
+                }
+                
+                // Main body of verification
+                if (Character.isLetter(checking)) {
+                    if (RHS == '(' || RHS == '~') { 
+                        throw new ValidationException("Missing Logical Operator at: " + pos);
+                    } else if (Character.isLetter(RHS)) {
+                        throw new ValidationException("Adjacent Variables at: " + pos);
+                    }
+                } else {
+                    switch (checking) {
+                        
+                        case '+':
+                        case '*':
+                        case '>':
+                        case '<':
+                        case '~':
+                        case '@':
+                            if(RHS == '*' || RHS == '+' || RHS == '>' || RHS == '<' || RHS == '@') {
+                                throw new ValidationException("Missing Variable at " + pos);
+                            } else if (RHS == ')') {
+                                throw new ValidationException("Invalid Parenthesis at: " + pos);
+                            }
+                            break;
+                        case '(':
+                            parCount++;
+                            //error check here
+                            if (RHS == '*' || RHS == '+' || RHS == '>' || RHS == '<') {
+                                throw new ValidationException("Missing Variable at: " + pos);
+                            } else if(RHS == '@') {
+                                throw new ValidationException("Invalid open parenthesis at: " + (pos - 1));
+                            } else if (RHS == ')') {
+                                throw new ValidationException("Empty parenthetical statement at: " + pos);
+                            }
+                            break;
+                        case ')':
+                            parCount--;
+                            // error checking
+                            if (Character.isLetter(RHS) || RHS == '~' || RHS == '(') {
+                                throw new ValidationException("Missing Logical Operator at: " + pos);
+                            }
+                            if (parCount < 0) {
+                                return parCount;
+                            }
+                            break;
+                        default:
+                            return parCount;               
+                    }
+                }                
+            }
+        if (parCount > 0) {
+            throw new ValidationException("You have " + parCount + "more open partheses than closed parentheses");
+        }
+	return unclosedCount;
 	}
 	
 	/**

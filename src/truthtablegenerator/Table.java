@@ -5,11 +5,9 @@
  */
 package truthtablegenerator;
 
-import com.oracle.deploy.update.UpdateCheck;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
+
 import java.util.ArrayList;
 import java.util.List;
-import jdk.nashorn.internal.objects.NativeString;
 
 /**
  * 
