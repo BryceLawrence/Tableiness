@@ -159,7 +159,7 @@ public class Expression {
                                 throw new ValidationException("Missing Logical Operator at: " + pos);
                             }
                             if (parCount < 0) {
-                                return parCount;
+                                throw new ValidationException("You have more closed parentheses than open parentheses");
                             }
                             break;
                         default:
@@ -168,7 +168,7 @@ public class Expression {
                 }                
             }
         if (parCount > 0) {
-            throw new ValidationException("You have " + parCount + "more open partheses than closed parentheses");
+            throw new ValidationException("You have " + parCount + "more open parentheses than closed parentheses");
         }
 	return unclosedCount;
 	}
