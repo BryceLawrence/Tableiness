@@ -312,6 +312,9 @@ public class Expression {
 			p /\ q \/ r /\ s	the step is p /\ q \/ r /\ s
 		*/
 		for (int i = 0; i < step.length(); i++) {
+			if (step.charAt(i) == '(') { // if a ( is found, dont evaluate its innards
+				i = findClosingParenthesis(step, i); // find the closing ')' and move to it
+			} 
 			if (target == '*') { //if we are searching for ANDS, and we run into an OR, IMPLY, or IFF
 				if (step.charAt(i) == '<' || step.charAt(i) == '>' || step.charAt(i) == '+') {
 					lastStartPoint = i + 1; // set the lastStartPoint to the character after that OR, IMPLY, or IFF
