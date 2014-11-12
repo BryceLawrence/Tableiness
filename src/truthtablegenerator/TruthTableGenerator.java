@@ -408,7 +408,7 @@ public class TruthTableGenerator extends Application {
 		Expression.setEnteredExpression(expression.getText());
 		if (Expression.validate()) {
 			Table t = new Table();
-			//t.run();
+			t.run();
 		}
 
 		expression.requestFocus();
