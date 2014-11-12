@@ -20,7 +20,7 @@ public class Table {
 		int tableSize = (int) Math.pow(2 ,Expression.getSize());
 		for(int i = 0; i < tableSize; i++) {
 			calcRow(i);
-		}
+	}
 	}
 	
 	public void calcRow(int step) {
@@ -42,7 +42,7 @@ public class Table {
 		for (int i = 0; i < variableCount; i ++) {
 			results.add(Integer.parseInt(steps.get(i)));
 		}
-		System.out.println();
+System.out.println();
 		List <String> steps2 =Expression.getFullExpression();
 		for (int i = variableCount; i < steps.size(); i ++) {
 			for (int j = i - 1; j  >=  variableCount; j --) {
