@@ -100,7 +100,7 @@ public class TruthTableGenerator extends Application {
 		
 		load.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(ActionEvent t) {
+			public void handle(ActionEvent event) {
 				String currentDir = System.getProperty("user.dir") + File.separator;
 				FileChooserBuilder fcb = FileChooserBuilder.create();
 				FileChooser fc = fcb.title("Expression to Load").initialDirectory(new File(currentDir)).build();
@@ -115,8 +115,21 @@ public class TruthTableGenerator extends Application {
 						}
 					}
 					if (file != null) {
-						// ADD FILE VALIDATION
-						// DO STUFF HERE
+						FileIO f = new FileIO();
+						expression.setText(f.loadExpression(file.toString()));
+						Expression.setEnteredExpression(expression.getText());
+						try {
+							if (Expression.validate()) {
+								Table t = new Table();
+								t.makeFullTable();
+							}
+						} catch (ValidationException ex) {
+							// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
+							// update then dont show errors. Also the error "Same" is not an error, more of a dont waste time updating, so 
+							// dont display it either
+							createErrorBox("Expression Loaded had this error:\n" + ex.getMessage());
+							System.out.println(ex.getMessage());
+						}
 					}
 				}
 			}
@@ -132,7 +145,8 @@ public class TruthTableGenerator extends Application {
 				
 				File file = fc.showSaveDialog(primaryStage);
 				if(file != null) {
-					//DO STUFF HERE
+					FileIO f = new FileIO();
+					f.saveExpression(file.toString(), expression.getText());
 				}
 			}
 		});
@@ -445,15 +459,15 @@ public class TruthTableGenerator extends Application {
 					Table t = new Table();
 					t.makeFullTable();
 				}
-				} catch (ValidationException ex) {
-// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
-// update then dont show errors. Also the error "Same" is not an error, more of a dont waste time updating, so 
-// dont display it either
-					if (showErrors && !ex.getMessage().equals("Same")) { 
-						createErrorBox(ex.getMessage());
-						System.out.println(ex.getMessage());
-					}
+			} catch (ValidationException ex) {
+				// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
+				// update then dont show errors. Also the error "Same" is not an error, more of a dont waste time updating, so 
+				// dont display it either
+				if (showErrors && !ex.getMessage().equals("Same")) { 
+					createErrorBox(ex.getMessage());
+					System.out.println(ex.getMessage());
 				}
+			}
 
 		expression.requestFocus();
 		expression.deselect(); 
