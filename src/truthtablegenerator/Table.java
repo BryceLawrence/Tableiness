@@ -19,7 +19,7 @@ public class Table {
 	 * Makes the full table row by row
 	 */
 	public void makeFullTable() {
-		int tableSize = (int) Math.pow(2 ,Expression.getSize());
+		int tableSize = (int) Math.pow(2 ,Expression.getVariableCount());
 		table.clear();
 		table.add(Expression.getFullExpression());
 		for(int i = 0; i < tableSize; i++) {
@@ -47,7 +47,7 @@ public class Table {
 	 * @param step the current row being calculated
 	 */
 	public void calcFullRow(int step) {
-		int variableCount = Expression.getSize();
+		int variableCount = Expression.getVariableCount();
 		
 		String binaryStep = Integer.toBinaryString(step);
 		while (binaryStep.length() < variableCount) {

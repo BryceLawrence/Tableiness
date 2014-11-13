@@ -447,7 +447,7 @@ public class TruthTableGenerator extends Application {
 				}
 				} catch (ValidationException ex) {
 // if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
-// update then dont show errors. Also the error Same is not an error, more of a dont waste time updating, so 
+// update then dont show errors. Also the error "Same" is not an error, more of a dont waste time updating, so 
 // dont display it either
 					if (showErrors && !ex.getMessage().equals("Same")) { 
 						createErrorBox(ex.getMessage());

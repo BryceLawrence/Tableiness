@@ -14,7 +14,7 @@ public class Expression {
 	private static String enteredExpression = null;
 	private static String workableExpression = null;
 	private static String lastWorkableExpression = null;
-	private static int size = 0;
+	private static int variableCount = 0;
 	private static List <String> variableList = new ArrayList<>();
 	private static List <String> steps = new ArrayList<>();
 	private static List <String> fullExpression = new ArrayList<>();
@@ -246,7 +246,7 @@ public class Expression {
 			if (workableExpression.charAt(i) == '(') {
 				steps.addAll(calculateParenthesesSteps(i +1));  // recursivly find the closing parenthesis
 				i += steps.get(steps.size() - 1).length() + 1; 
-				//get the size of the array - 1 -> get last element -> get its length->
+				//get the variableCount of the array - 1 -> get last element -> get its length->
 				//add 1 for the missing start parenthesis -> sets the index to that closing parenthesis, 
 				//which will then move forward when i++ happens
 			}
@@ -464,18 +464,23 @@ public class Expression {
 		
 		fullExpression.addAll(variableList);
 		fullExpression.addAll(steps);
-		size = variables.size();
+		variableCount = variables.size();
 //System.out.println("	FULL EXPRESSION");
 //System.out.println(fullExpression);
 	}
-	
-	/* Is this NOT just the workable expression without the @s
-	public static void setCompactExpression() {
-	}*/
 
-	public static int getSize() {
-		return size;
+	/**
+	 * Gets the variable count
+	 * @return variableCount
+	 */
+	public static int getVariableCount() {
+		return variableCount;
 	}
+	
+	/**
+	 * Gets the full expression
+	 * @return fullExpression
+	 */
 	public static List<String> getFullExpression() {
 		return fullExpression;
 	}
