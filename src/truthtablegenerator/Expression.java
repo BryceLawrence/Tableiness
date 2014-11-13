@@ -42,10 +42,16 @@ public class Expression {
 			workableExpression = workableExpression.replaceAll("true", "1");
 			workableExpression = workableExpression.replaceAll("false", "0");
 			workableExpression = workableExpression.replaceAll("-->",">");
+			workableExpression = workableExpression.replaceAll("implies",">");
+			workableExpression = workableExpression.replaceAll("imply",">");
 			workableExpression = workableExpression.replaceAll("<->","<");
+			workableExpression = workableExpression.replaceAll("iff","<");
 			workableExpression = workableExpression.replaceAll("\\\\/","+");
+			workableExpression = workableExpression.replaceAll("or","+");
 			workableExpression = workableExpression.replaceAll("/\\\\","*");
+			workableExpression = workableExpression.replaceAll("and","*");
 			workableExpression = workableExpression.replaceAll("!","~");
+			workableExpression = workableExpression.replaceAll("not","~");
 			workableExpression = workableExpression.replaceAll("\\s",""); //remove spaces
 			workableExpression = "@" + workableExpression + "@"; // used for validation to prevent null pointer issues
 			// removed in getParentheticalSteps
@@ -192,7 +198,7 @@ public class Expression {
 						}
 						break;
 					default:
-						return parCount;               
+						throw new ValidationException("Invalid Character at: " + pos);         
 				}
 			}                
 		}
