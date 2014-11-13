@@ -53,6 +53,7 @@ public class TruthTableGenerator extends Application {
 	private String outputMode = new String("Compact View");
 	
 	int caretLocation;
+	
 	/**
 	 *	Create an Error Box when user messes up
 	 * @param errorText the string to display in the error box generated
@@ -256,6 +257,7 @@ public class TruthTableGenerator extends Application {
                         KeyCode.D, KeyCombination.ALT_DOWN, KeyCombination.CONTROL_DOWN));
 		
 	}
+	
 	/**
 	 *	Creates the HELP part of the MenuBar
 	 */
@@ -317,6 +319,9 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
+				if (outputSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
 			}
 		});
 		or.setOnAction(new EventHandler<ActionEvent>() {
@@ -329,6 +334,9 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
+				if (outputSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
 			}
 		});
 		imply.setOnAction(new EventHandler<ActionEvent>() {
@@ -341,6 +349,9 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
+				if (outputSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
 			}
 		});
 		not.setOnAction(new EventHandler<ActionEvent>() {
@@ -353,6 +364,9 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
+				if (outputSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
 			}
 		});
 		left.setOnAction(new EventHandler<ActionEvent>() {
@@ -365,6 +379,9 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
+				if (outputSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
 			}
 		});
 		right.setOnAction(new EventHandler<ActionEvent>() {
@@ -377,6 +394,9 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
+				if (outputSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
 			}
 		});
 		speedButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -412,7 +432,12 @@ public class TruthTableGenerator extends Application {
 		});
 	}
 	
-	private void submitExpression() {
+	/**
+	 * Submits the expression to be validated, and then shows error messages if invalid
+	 * or creates a table and calls display function if valid
+	 * @param showErrors should error messages be displayed? (dynamic updates shouldn't show errors)
+	 */
+	private void submitExpression(boolean showErrors) {
 		Expression.setEnteredExpression(expression.getText());
 
 			try {
@@ -421,8 +446,13 @@ public class TruthTableGenerator extends Application {
 					t.makeFullTable();
 				}
 				} catch (ValidationException ex) {
-					createErrorBox(ex.getMessage());
-					System.out.println(ex.getMessage());
+// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
+// update then dont show errors. Also the error Same is not an error, more of a dont waste time updating, so 
+// dont display it either
+					if (showErrors && !ex.getMessage().equals("Same")) { 
+						createErrorBox(ex.getMessage());
+						System.out.println(ex.getMessage());
+					}
 				}
 
 		expression.requestFocus();
@@ -430,6 +460,9 @@ public class TruthTableGenerator extends Application {
 		expression.positionCaret(caretLocation);
 	}
 	
+	/**
+	 * Creates the expression bar and submit button
+	 */
 	private void makeExpressionBar() {
 		Button submit = new Button("GO");
 		expression.setPrefWidth(500);
@@ -439,6 +472,9 @@ public class TruthTableGenerator extends Application {
 			@Override
 			public void handle(KeyEvent event) {
 				caretLocation = expression.getCaretPosition();
+				if (outputSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
 			}
 		});
 		
@@ -453,7 +489,7 @@ public class TruthTableGenerator extends Application {
 		submit.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				submitExpression();
+				submitExpression(true);
 			}
 		});
 	}
@@ -491,7 +527,7 @@ public class TruthTableGenerator extends Application {
 			new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_ANY), 
 			new Runnable() {
 				@Override public void run() {
-					submitExpression();
+					submitExpression(true);
 				}
 			}
 		);

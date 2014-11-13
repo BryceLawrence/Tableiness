@@ -13,6 +13,7 @@ public class Expression {
 	private static final Expression expression = new Expression(); // Eager singleton, NOT threadsafe
 	private static String enteredExpression = null;
 	private static String workableExpression = null;
+	private static String lastWorkableExpression = null;
 	private static int size = 0;
 	private static List <String> variableList = new ArrayList<>();
 	private static List <String> steps = new ArrayList<>();
@@ -40,24 +41,26 @@ public class Expression {
 			workableExpression = enteredExpression.toLowerCase();
 			workableExpression = workableExpression.replaceAll("true", "1");
 			workableExpression = workableExpression.replaceAll("false", "0");
-			workableExpression = workableExpression.replaceAll("\\s","");
 			workableExpression = workableExpression.replaceAll("-->",">");
 			workableExpression = workableExpression.replaceAll("<->","<");
 			workableExpression = workableExpression.replaceAll("\\\\/","+");
 			workableExpression = workableExpression.replaceAll("/\\\\","*");
 			workableExpression = workableExpression.replaceAll("!","~");
+			workableExpression = workableExpression.replaceAll("\\s",""); //remove spaces
 			workableExpression = "@" + workableExpression + "@"; // used for validation to prevent null pointer issues
 			// removed in getParentheticalSteps
 		}
 	}
 	
 	/**
-	 * Validates the users Expression
+	 * Validates the users Expression. Throws error messages from invalidate.
 	 * @return true if valid, false if non-matching braces. throws operator/variable expressions
 	 */
 	public static boolean validate() throws ValidationException { //needs to throw error codes for display
 		cleanup(); // prepares the expression to be worked on
 		if (invalidate(0) == 0) { // no open parentheses yet and start at spot 1. (0 is an "@")
+			// for checking differences between entries
+			lastWorkableExpression = new String(workableExpression);
 			//need to reset the lists so that they dont just stack onto old expressions
 			variableList.clear();
 			steps.clear();
@@ -70,7 +73,7 @@ public class Expression {
 	}
 	
 	/**
-	 * Validates the users Expression and sets the 
+	 * Validates the users Expression. Throws error messages from invalidate.
 	 * @param expression The string the user entered.
 	 * @return true if valid, false if non-matching braces. throws operator/variable expressions
 	 */
@@ -78,20 +81,28 @@ public class Expression {
 		setEnteredExpression(expression);
 		cleanup(); // prepares the expression to be worked on
 		if (invalidate(0) == 0) { // no open parentheses yet and start at spot 1. (0 is an "@")
-			// get size
+			// for checking differences between entries
+			lastWorkableExpression = new String(workableExpression);
+			//need to reset the lists so that they dont just stack onto old expressions
+			variableList.clear();
+			steps.clear();
+			fullExpression.clear();
+			//cleanup(); This was pointless.
+			setFullExpression();
 			return true;
 		}
 		return false; // note false is only if there are nonmatching parentheses. all other errors are thrown.
 	}
 	
 	/**
-	 * Checks if the expression is invalid. 
+	 * Checks if the expression is invalid. Throws error messages when invalid.
 	 * @param unclosedCount number of left parentheses w/o right ones. if ever negative,  expression is FALSE.
 	 *		Initial pass in should be 0;
 	 * @param position the position in the String. Initial call should be 1
 	 * @return unclosedCount. If not 0, then the expression is invalid
 	 */
 	private static int invalidate(int unclosedCount) throws ValidationException{ //throws error codes
+		
 		// empty expression check
 		if (workableExpression.equals("@@")) {
 			throw new ValidationException("Empty Logical Expression");
@@ -99,9 +110,12 @@ public class Expression {
 		// expression must contain more than a single constant (a constant isnt a variable or a step, so one
 		// by itself evaluates to an empty expression)
 		if (workableExpression.equals("@1@") || workableExpression.equals("@1@")) {
-			throw new ValidationException("Expression Must Contain More Than a Single Constant");
+			throw new ValidationException("Expression Must Contain \nMore Than a Single Constant");
 		}
-		
+		//dont validate an expression that is the same as the last one.
+		if (workableExpression.equals(lastWorkableExpression)) {
+			throw new ValidationException("Same");
+		}
 		int pos;
 		// Note on position. Our string has an '@' at position 0, so the users
 		// first character is at our position 1. All validation errors will 
