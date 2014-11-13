@@ -92,7 +92,16 @@ public class Expression {
 	 * @return unclosedCount. If not 0, then the expression is invalid
 	 */
 	private static int invalidate(int unclosedCount) throws ValidationException{ //throws error codes
-		//insert code here	
+		// empty expression check
+		if (workableExpression.equals("@@")) {
+			throw new ValidationException("Empty Logical Expression");
+		} 
+		// expression must contain more than a single constant (a constant isnt a variable or a step, so one
+		// by itself evaluates to an empty expression)
+		if (workableExpression.equals("@1@") || workableExpression.equals("@1@")) {
+			throw new ValidationException("Expression Must Contain More Than a Single Constant");
+		}
+		
 		int pos;
 		// Note on position. Our string has an '@' at position 0, so the users
 		// first character is at our position 1. All validation errors will 
@@ -115,11 +124,6 @@ public class Expression {
 
 			// unbalanced parentheses
 
-
-			// No expression
-			if (checking == '@' && RHS == '@') {
-				 throw new ValidationException("Empty Logical Expression");
-			}
 
 			// Main body of verification
 			if (Character.isLetter(checking)) {
@@ -247,7 +251,6 @@ public class Expression {
 	 private static int findClosingParenthesis(String step, int startSearch) {
 		int skip = startSearch + 1; // start on the char AFTER the starting '('
 		int unclosedCount = 1; //we skipped the starting '(' so start at one
-		System.out.println(step);
 		while (unclosedCount != 0) { //find the end of the parenthetical expression
 			if (step.charAt(skip) == '(') {
 				unclosedCount++; // add a level

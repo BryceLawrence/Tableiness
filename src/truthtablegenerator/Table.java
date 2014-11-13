@@ -60,40 +60,43 @@ public class Table {
 		for (int i = 0; i < variableCount; i ++) {
 			results.add(Integer.parseInt(Character.toString(binaryStep.charAt(i))));
 		}
-		String phrase = steps.get(variableCount);
-		for (int i = variableCount; i < steps.size(); i++) {
-			phrase = steps.get(i);
-			for (int j = i - 1; j  >= variableCount; j--) {
-				if (steps.get(i).contains(steps.get(j))) {
-					// first try to replace surrounded in (); (a*b)*c, a*b wont be surrounded in () in last step so add it
-					phrase = phrase.replace("(" + steps.get(j) + ")", Integer.toString(results.get(j)));
-					//then try to replace without (); a*b*c, doenst have () so try without
-					phrase = phrase.replace(steps.get(j), Integer.toString(results.get(j)));
+		
+		if (steps.size() > 1) {	// if there is just a single variable without steps, skip this
+			String phrase = steps.get(variableCount);
+			for (int i = variableCount; i < steps.size(); i++) {
+				phrase = steps.get(i);
+				for (int j = i - 1; j  >= variableCount; j--) {
+					if (steps.get(i).contains(steps.get(j))) {
+						// first try to replace surrounded in (); (a*b)*c, a*b wont be surrounded in () in last step so add it
+						phrase = phrase.replace("(" + steps.get(j) + ")", Integer.toString(results.get(j)));
+						//then try to replace without (); a*b*c, doenst have () so try without
+						phrase = phrase.replace(steps.get(j), Integer.toString(results.get(j)));
+					}
 				}
-			}
-			for (int j = 0; j < variableCount; j++) {
-				phrase = phrase.replace(steps.get(j).charAt(0), binaryStep.charAt(j));
-			}
-			if (phrase.length() == 2) {
-				results.add(BinaryMath.not(Character.getNumericValue(phrase.charAt(1))));
-			} else {
-				switch (phrase.charAt(1)) {
-					case '*':
-						results.add(BinaryMath.and(Character.getNumericValue(phrase.charAt(0)), 
-						Character.getNumericValue(phrase.charAt(2))));
-						break;
-					case '+':
-						results.add(BinaryMath.or(Character.getNumericValue(phrase.charAt(0)), 
-						Character.getNumericValue(phrase.charAt(2))));
-						break;
-					case '>':
-						results.add(BinaryMath.implies(Character.getNumericValue(phrase.charAt(0)), 
-						Character.getNumericValue(phrase.charAt(2))));
-						break;
-					case '<':
-						results.add(BinaryMath.iff(Character.getNumericValue(phrase.charAt(0)), 
-						Character.getNumericValue(phrase.charAt(2))));
-						break;
+				for (int j = 0; j < variableCount; j++) {
+					phrase = phrase.replace(steps.get(j).charAt(0), binaryStep.charAt(j));
+				}
+				if (phrase.length() == 2) {
+					results.add(BinaryMath.not(Character.getNumericValue(phrase.charAt(1))));
+				} else {
+					switch (phrase.charAt(1)) {
+						case '*':
+							results.add(BinaryMath.and(Character.getNumericValue(phrase.charAt(0)), 
+							Character.getNumericValue(phrase.charAt(2))));
+							break;
+						case '+':
+							results.add(BinaryMath.or(Character.getNumericValue(phrase.charAt(0)), 
+							Character.getNumericValue(phrase.charAt(2))));
+							break;
+						case '>':
+							results.add(BinaryMath.implies(Character.getNumericValue(phrase.charAt(0)), 
+							Character.getNumericValue(phrase.charAt(2))));
+							break;
+						case '<':
+							results.add(BinaryMath.iff(Character.getNumericValue(phrase.charAt(0)), 
+							Character.getNumericValue(phrase.charAt(2))));
+							break;
+					}
 				}
 			}
 		}

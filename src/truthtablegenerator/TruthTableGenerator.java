@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -56,19 +57,24 @@ public class TruthTableGenerator extends Application {
 	 *	Create an Error Box when user messes up
 	 * @param errorText the string to display in the error box generated
 	 */
-	public void createErrorBox(String errorText) {
+	public void createErrorBox(String message) {
 		BorderPane pane = new BorderPane();
+		Label l = new Label();
+		l.setText(message);
 		Button b  = new Button("Close");
-		pane.setCenter(b);
+		
+		pane.setCenter(l);
+		pane.setBottom(b);
 		
 		Stage stage = new Stage();
+		stage.getIcons().add(new Image("file:src\\truthtablegenerator\\errorIcon.png"));
 		b.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
 				stage.close();
 				}
 		});
-		stage.setTitle(errorText);
+		stage.setTitle("Error in Expression");
 		stage.setScene(new Scene(pane, 250, 150));
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.showAndWait();
@@ -414,9 +420,10 @@ public class TruthTableGenerator extends Application {
 					Table t = new Table();
 					t.makeFullTable();
 				}
-            } catch (ValidationException ex) {
-                System.out.println(ex.getMessage());
-            }
+				} catch (ValidationException ex) {
+					createErrorBox(ex.getMessage());
+					System.out.println(ex.getMessage());
+				}
 
 		expression.requestFocus();
 		expression.deselect(); 
