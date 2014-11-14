@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -68,7 +69,7 @@ public class TruthTableGenerator extends Application {
 		pane.setBottom(b);
 		
 		Stage stage = new Stage();
-		stage.getIcons().add(new Image("file:src\\truthtablegenerator\\errorIcon.png"));
+		stage.getIcons().add(new Image("file:src\\resources\\errorIcon.png"));
 		b.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
@@ -79,6 +80,76 @@ public class TruthTableGenerator extends Application {
 		stage.setScene(new Scene(pane, 250, 150));
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.showAndWait();
+	}
+	
+	public void createHelpWindow() {
+		Stage stage = new Stage();
+		stage.getIcons().add(new Image("file:src\\resources\\iconSmall.png"));
+		
+		Button terms  = new Button("Terms");
+		Button rules  = new Button("Rules");
+		Button hints  = new Button("Hints");
+		Button laws = new Button("Logical Equivalences 1");
+		Button lawsConditional = new Button("Logical Equivalences 2");
+		Button close  = new Button("Close");
+		HBox helpButtonsRow = new HBox();
+		
+		helpButtonsRow.getChildren().addAll(terms, rules, hints, laws, lawsConditional, close);
+		
+		
+		BorderPane pane = new BorderPane();
+		TextArea text = new TextArea();
+		FileIO f = new FileIO();
+		//text.setText(f.loadHelpContents());
+		
+		text.setEditable(false);
+		text.setWrapText(true);
+		
+		pane.setTop(helpButtonsRow);
+		pane.setCenter(text);
+		
+		terms.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				text.setText(f.loadHelpContents("Terms"));
+				}
+		});
+		rules.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				text.setText(f.loadHelpContents("Rules"));
+				}
+		});
+		hints.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				text.setText(f.loadHelpContents("Hints"));
+				}
+		});
+		laws.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				text.setText(f.loadHelpContents("Laws"));
+				}
+		});
+		lawsConditional.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				text.setText(f.loadHelpContents("LawsConditional"));
+				}
+		});
+		close.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				stage.close();
+				}
+		});
+		
+		stage.setTitle("Help");
+		stage.setScene(new Scene(pane, 600, 600));
+		stage.initModality(Modality.APPLICATION_MODAL);
+		stage.showAndWait();
+		
 	}
 	
 	/**
@@ -277,23 +348,15 @@ public class TruthTableGenerator extends Application {
 	 */
 	private void createHelpMenuBar() {
 		MenuItem help = new MenuItem("Help");
-		MenuItem moreHelp = new MenuItem("More Help");
 		
-		helpMenu.getItems().addAll(help, moreHelp);
+		helpMenu.getItems().add(help);
 		
 		//START HELP EVENT HANDLING
 		
 		help.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				//add handle
-			}
-		});
-		
-		moreHelp.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent t) {
-				//add handle
+				createHelpWindow();
 			}
 		});
 	}
@@ -527,7 +590,7 @@ public class TruthTableGenerator extends Application {
 	public void start(Stage primaryStage) {
 		caretLocation = 0;
 		
-		primaryStage.getIcons().addAll(new Image("file:src\\truthtablegenerator\\icon.png"), new Image("file:src\\truthtablegenerator\\icon.png")); 
+		primaryStage.getIcons().addAll(new Image("file:src\\resources\\icon.png"), new Image("file:src\\resources\\icon.png")); 
 		makeMenuBar(primaryStage);
 		makeCenterArea();
 		

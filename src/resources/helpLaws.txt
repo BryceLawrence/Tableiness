@@ -1,0 +1,30 @@
+	Identity:
+p /\ true = p
+p \/ false = p
+	Domination:
+p /\ false = false
+p \/ true = true
+	Idempotent:
+p /\ p = p
+p \/ p = p
+	Double negation:
+~~p = p
+	Commutative:
+p /\ q = q /\ p
+p \/ q = q \/ p
+	Associative:
+(p /\ q) /\ r = p /\ (q /\ r)
+(p \/ q) \/ r = p \/ (q \/ r)
+	Distributive:
+p /\ (q \/ r) = (p \/ q) /\ (p \/ r)
+p \/ (q /\ r) = (p /\ q) \/ (p /\ r)
+	De Morgan's:
+~(p /\ q) = ~p \/ ~q
+~(p \/ q) = ~p /\ ~q
+	Absorption:
+p /\ (p /\ q) = p
+p \/ (p \/ q) = p
+	Negation:
+p /\ ~p = false
+p \/ ~p = true
+

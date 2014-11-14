@@ -6,6 +6,7 @@
 package truthtablegenerator;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -18,6 +19,22 @@ import java.util.logging.Logger;
  * @author McAllister
  */
 public class FileIO {
+	public String loadHelpContents(String target) {
+		String contents = "";
+		try {
+			BufferedReader fin = new BufferedReader(new FileReader(("src/resources/help" + target + ".txt")));
+			String line;
+			while ((line = fin.readLine()) != null) {
+				contents += line + "\n";
+			}
+		}catch (IOException e) {
+			System.out.println(e.getMessage());
+			System.out.println("ERROR Reading Help File");
+		} 
+		
+		return contents;
+	}
+		
 	public String loadExpression(String fileName) {
 		String expression = null;
 		try {

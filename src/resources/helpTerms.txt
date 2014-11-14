@@ -1,0 +1,8 @@
+Expression - The logical expression entered into the text field.
+Variable - Any single character is a variable. 
+Constant - True or false. May also be represented as 1 or 0.
+Operator - AND, OR, NOT, IMPLY, IFF
+Batch mode - The expression is not evaluated until the "GO" button is pressed.
+Dynamic mode - The expression is evaluated each time it changes.
+Full mode - The expression is displayed variables first, and then each step in the correct order of operations.
+Compact mode - The expression is displayed all together with the results of each variable or operation displayed under itself. (aka Half-as-Fast)
