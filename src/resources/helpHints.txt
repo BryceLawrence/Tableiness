@@ -6,4 +6,4 @@
 6. IFF may be represented by <-> or < or " iff " with the spaces and without quotes.
 7. TRUE may be represented by 1 or " true " with the spaces and without quotes.
 8. FALSE may be represented by 0 or " false " with the spaces and without quotes.
-9. The order of operations is NOT, AND, OR, IMPLIES, IFF. Parentheses are not required unless a different order is desired.
+9. The order of operations is PARENTHESES, NOT, AND, OR, IMPLIES, IFF. Parentheses are not required unless a different order is desired.
