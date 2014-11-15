@@ -43,14 +43,16 @@ public class TruthTableGenerator extends Application {
 			private Menu helpMenu = new Menu("Help");
 		private VBox centerArea = new VBox();
 			private HBox buttonsRow = new HBox();
-				private Button speedButton = new Button("Batch Entry");
+				private Button displayResponseSpeedButton = new Button("Batch Entry");
+				private Button displaySpeedButton = new Button("Step Mode");
 				private Button modeButton = new Button("Compact View");
 			private HBox expressionRow = new HBox();
 				private TextField expression = new TextField();
 			private BorderPane tableArea = new BorderPane();
 	
 	// output mode variables
-	private String outputSpeed = new String("Batch Entry");
+	private String outputDisplaySpeed = new String("Step Mode");
+	private String outputResponseSpeed = new String("Batch Entry");
 	private String outputMode = new String("Compact View");
 	
 	int caretLocation;
@@ -244,8 +246,8 @@ public class TruthTableGenerator extends Application {
 				
 				//some table updater
 				
-				outputSpeed = "Batch Entry";
-				speedButton.setText("Batch Entry");
+				outputResponseSpeed = "Batch Entry";
+				displayResponseSpeedButton.setText("Batch Entry");
 				
 				outputMode = "Compact View";
 				modeButton.setText("Compact View");
@@ -287,9 +289,11 @@ public class TruthTableGenerator extends Application {
 		MenuItem full = new MenuItem("Full View");
 		MenuItem batch = new MenuItem("Batch Mode");
 		MenuItem dynamic = new MenuItem("Dynamic Mode");
+		MenuItem instant = new MenuItem("Instant Display");
+		MenuItem step = new MenuItem("Step Display");
 		
 		
-		modeMenu.getItems().addAll(compact, full, batch, dynamic);
+		modeMenu.getItems().addAll(compact, full, batch, dynamic, step, instant);
 		
 		//START MODE EVENT HANDLING
 		
@@ -311,15 +315,29 @@ public class TruthTableGenerator extends Application {
 		batch.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				outputSpeed = "Batch Entry";
-				speedButton.setText("Batch Entry");
+				outputResponseSpeed = "Batch Entry";
+				displayResponseSpeedButton.setText("Batch Entry");
 			}
 		});
 		dynamic.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				outputSpeed = "Dynamic Entry";
-				speedButton.setText("Dynamic Entry");
+				outputResponseSpeed = "Dynamic Entry";
+				displayResponseSpeedButton.setText("Dynamic Entry");
+			}
+		});
+		step.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent t) {
+				outputDisplaySpeed = "Step Mode";
+				displaySpeedButton.setText("Step Mode");
+			}
+		});
+		instant.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent t) {
+				outputDisplaySpeed = "Instant Mode";
+				displaySpeedButton.setText("Instant Mode");
 			}
 		});
 		
@@ -384,7 +402,7 @@ public class TruthTableGenerator extends Application {
 		Button  right = new Button(")");
 		
 		buttonsRow.setSpacing(10);
-		buttonsRow.getChildren().addAll(and, or, imply, not, left, right, speedButton, modeButton);
+		buttonsRow.getChildren().addAll(and, or, imply, not, left, right, displayResponseSpeedButton, modeButton, displaySpeedButton);
 		
 		and.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -396,7 +414,7 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
 					submitExpression(false);
 				}
 			}
@@ -411,7 +429,7 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
 					submitExpression(false);
 				}
 			}
@@ -426,7 +444,7 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
 					submitExpression(false);
 				}
 			}
@@ -441,7 +459,7 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
 					submitExpression(false);
 				}
 			}
@@ -456,7 +474,7 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
 					submitExpression(false);
 				}
 			}
@@ -471,20 +489,20 @@ public class TruthTableGenerator extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
 					submitExpression(false);
 				}
 			}
 		});
-		speedButton.setOnAction(new EventHandler<ActionEvent>() {
+		displayResponseSpeedButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				if(outputSpeed.equals("Batch Entry")) {
-					outputSpeed = "Dynamic Entry";
-					speedButton.setText(outputSpeed);
+				if(outputResponseSpeed.equals("Batch Entry")) {
+					outputResponseSpeed = "Dynamic Entry";
+					displayResponseSpeedButton.setText(outputResponseSpeed);
 				} else {
-					outputSpeed = "Batch Entry";
-					speedButton.setText(outputSpeed);
+					outputResponseSpeed = "Batch Entry";
+					displayResponseSpeedButton.setText(outputResponseSpeed);
 				}		
 				expression.requestFocus();
 				expression.deselect(); 
@@ -507,6 +525,21 @@ public class TruthTableGenerator extends Application {
 				expression.positionCaret(caretLocation);
 			}
 		});
+		displaySpeedButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				if(outputDisplaySpeed.equals("Instant Mode")) {
+					outputDisplaySpeed = "Step Mode";
+					displaySpeedButton.setText(outputDisplaySpeed);
+				} else {
+					outputDisplaySpeed = "Instant Mode";
+					displaySpeedButton.setText(outputDisplaySpeed);
+				}		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.positionCaret(caretLocation);
+			}
+		});
 	}
 	
 	/**
@@ -521,6 +554,7 @@ public class TruthTableGenerator extends Application {
 				if (Expression.validate()) {
 					Table t = new Table();
 					t.makeFullTable();
+					//t.calcStep("(~0+~0+~0)*(0+0+0)", 0);
 				}
 			} catch (ValidationException ex) {
 				// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
@@ -549,7 +583,7 @@ public class TruthTableGenerator extends Application {
 			@Override
 			public void handle(KeyEvent event) {
 				caretLocation = expression.getCaretPosition();
-				if (outputSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
 					submitExpression(false);
 				}
 			}
