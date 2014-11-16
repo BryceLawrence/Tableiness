@@ -5,59 +5,57 @@
  */
 package truthtablegenerator;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Creates tables from logical expressions
  */
-public class Table {
-	private List<List <String>> fullTable = new ArrayList<>();
+public class CompactTableGenerator {
 	private List<List <String>> compactTable = new ArrayList<>();
+	private List<Integer> displayOrder = new ArrayList<>();
 	
 	/**
 	 * Makes the full fullTable row by row
 	 */
-	public void makeFullTable() {
+	private void makeTable() {
 		int tableSize = (int) Math.pow(2 ,Expression.getVariableCount());
-		fullTable.clear();
-		fullTable.add(Expression.getFullExpression());
-		for(int i = 0; i < tableSize; i++) {
-			calcFullRow(i);
+		compactTable.clear();
+		String compactTableString = new String(Expression.getCompactExpression());
+		List<String> expressionRow = new ArrayList<>();
+		List<String> emptyRow = new ArrayList<>();
+		
+		for (int i = 0; i < compactTableString.length(); i++) { 
+			// break the expression into component parts
+			expressionRow.add(Character.toString(compactTableString.charAt(i)));
+			// create a list of equal size to expression row of spaces. used to initalize the result rows so i can set elements
+			// of the row without any shifting
+			emptyRow.add(" ");
 		}
-		for (List<String> row : fullTable) {
+		
+		expressionRow.add("Result"); // add a result row to quickly see the result without finding the last step
+		emptyRow.add(" "); // add one more space for the result row
+		compactTable.add(expressionRow);
+		
+		for (int i = 1; i < tableSize; i++) {
+			compactTable.add(emptyRow);
+		}
+		
+		
+		for(int i = 0; i < tableSize; i++) {
+			//calcRow(i);
+		}
+		
+		for (List<String> row : compactTable) {
 			System.out.println(row);
 		}
-	}
-	
-	public void makeCompactTable() {
-		String expression = Expression.getFullExpression().get(Expression.getFullExpression().size() - 1);
-		System.out.println(expression);
-		for (int i = 0; i < expression.length(); i ++) {
-			ArrayList<String> s = new ArrayList<>();
-			s.add(Character.toString(expression.charAt(i)));
-			compactTable.add(s);
-		}
-		System.out.println(compactTable);
-	}
-	
-	/**
-	 * Gets the fullTable 
-	 * The fullTable is a two dimensional List, or a list of lists broken up by ROWS of elements
-	 * the first row is the expression, broken down to individual parts,
-	 * the rest of the rows are the results one character at a time.
-	 * @return fullTable
-	 */
-	public List<List<String>> getFullTable() {
-		return fullTable;
 	}
 	
 	/**
 	 * Calculates a single row, and adds its result to the fullTable
 	 * @param step the current row being calculated
 	 */
-	public void calcFullRow(int step) {
+	private void calcFullRow(int step) {
 		int variableCount = Expression.getVariableCount();
 		
 		String binaryStep = Integer.toBinaryString(step);
@@ -77,18 +75,23 @@ public class Table {
 			for (int j = 0; j < variableCount; j++) {
 				currentStep = currentStep.replace(steps.get(j).charAt(0), binaryStep.charAt(j));
 			}
-			results.add(Integer.parseInt(calcStep(currentStep, 0)));
+			results.add(Integer.parseInt(calcStep(currentStep)));
 		}
 		List<String> stringResults  = new ArrayList<>();
 		for (int r : results) {
 			stringResults.add(Integer.toString(r));
 		}
-		fullTable.add(stringResults);
+		//fullTable.add(stringResults);
 	}
 	
-	public String calcStep(String step, int startPoint) {
+	/**
+	 * Calculates a single step. Recursively calculates parenthetical steps
+	 * @param step the step to calculate
+	 * @return 
+	 */
+	public String calcStep(String step) {
 		int endPoint = 0;
-		for (int i = startPoint; i < step.length(); i ++) {
+		for (int i = 0; i < step.length(); i ++) {
 			if (step.charAt(i) == '(') {
 				int parCount = 1;
 				int skip = 1;
@@ -100,21 +103,11 @@ public class Table {
 						parCount--;
 					}
 				}
-				step =  step.substring(0, i) + calcStep(step.substring(i + 1, i + skip - 1), 0) + step.substring(i + skip);
-			} else if (step.charAt(i) == ')') {
-				endPoint = i;
-				step = step.substring(startPoint, endPoint);
-				startPoint = 0;
-				endPoint = step.length();
-				break;
-			} else if (i == step.length() - 1) {
-				endPoint = i;
-				break;
-			}
+				step =  step.substring(0, i) + calcStep(step.substring(i + 1, i + skip - 1)) + step.substring(i + skip);
+			} 
 		}
-		
 		endPoint = step.length();
-		for (int i = startPoint; i < endPoint; i++) {
+		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '~') {
 				step = step.substring(0, i) + BinaryMath.not(Character.getNumericValue(step.charAt(i + 1))) + step.substring(i + 2);
 				i -= 1;
@@ -154,6 +147,18 @@ public class Table {
 			}
 		}
 		return step;
+	}
+	
+	/**
+	 * Generates the Compact Table and then returns it
+	 * The CompactTable is a two dimensional List, or a list of lists broken up by ROWS of elements
+	 * the first row is the expression, broken down to individual characters,
+	 * the rest of the rows are the results one line at a time.
+	 * @return fullTable
+	 */
+	public List<List<String>> getTable() {
+		makeTable();
+		return compactTable;
 	}
 }
 

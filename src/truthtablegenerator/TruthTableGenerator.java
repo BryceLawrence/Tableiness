@@ -100,8 +100,8 @@ public class TruthTableGenerator extends Application {
 		
 		
 		BorderPane pane = new BorderPane();
-		TextArea text = new TextArea();
 		FileIO f = new FileIO();
+		TextArea text = new TextArea(f.loadHelpContents("Rules"));
 		//text.setText(f.loadHelpContents());
 		
 		text.setEditable(false);
@@ -149,8 +149,7 @@ public class TruthTableGenerator extends Application {
 		
 		stage.setTitle("Help");
 		stage.setScene(new Scene(pane, 600, 600));
-		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.showAndWait();
+		stage.show();
 		
 	}
 	
@@ -193,8 +192,8 @@ public class TruthTableGenerator extends Application {
 						Expression.setEnteredExpression(expression.getText());
 						try {
 							if (Expression.validate()) {
-								Table t = new Table();
-								t.makeFullTable();
+								FullTableGenerator t = new FullTableGenerator();
+								t.getTable();
 							}
 						} catch (ValidationException ex) {
 							// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
@@ -552,8 +551,8 @@ public class TruthTableGenerator extends Application {
 
 			try {
 				if (Expression.validate()) {
-					Table t = new Table();
-					t.makeFullTable();
+					FullTableGenerator t = new FullTableGenerator();
+					t.getTable();
 					//t.calcStep("(~0+~0+~0)*(0+0+0)", 0);
 				}
 			} catch (ValidationException ex) {
