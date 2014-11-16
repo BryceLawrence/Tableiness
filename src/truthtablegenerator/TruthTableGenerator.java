@@ -15,6 +15,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -393,12 +394,23 @@ public class TruthTableGenerator extends Application {
 	 * Make the logic buttons and toggle buttons
 	 */
 	private void makeLogicButtons() {
-		Button  and = new Button("AND /\\");
-		Button  or = new Button("OR \\/");
-		Button  imply = new Button("IMPLY -->");
-		Button  not = new Button("NOT !");
-		Button  left = new Button("(");
-		Button  right = new Button(")");
+		Button  and = new Button();
+                and.setGraphic(new ImageView(ImageGetter.getTeXImage("\\land")));
+                
+		Button  or = new Button();
+                or.setGraphic(new ImageView(ImageGetter.getTeXImage("\\lor")));
+                
+		Button  imply = new Button();
+                imply.setGraphic(new ImageView(ImageGetter.getTeXImage("\\Rightarrow")));
+                
+		Button  not = new Button();
+                not.setGraphic(new ImageView(ImageGetter.getTeXImage("\\lnot")));
+                
+		Button  left = new Button();
+                left.setGraphic(new ImageView(ImageGetter.getTeXImage("(")));
+                
+		Button  right = new Button();
+                right.setGraphic(new ImageView(ImageGetter.getTeXImage(")")));
 		
 		buttonsRow.setSpacing(10);
 		buttonsRow.getChildren().addAll(and, or, imply, not, left, right, displayResponseSpeedButton, modeButton, displaySpeedButton);
