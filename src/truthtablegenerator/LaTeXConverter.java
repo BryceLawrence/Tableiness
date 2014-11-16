@@ -22,8 +22,8 @@ public class LaTeXConverter {
             converted = converted.replaceAll("\\*", "\\land ");
             converted = converted.replaceAll("\\+", "\\lor ");
             converted = converted.replaceAll("~", "\\lnot ");
-            converted = converted.replaceAll(">", "\\RightArrow ");
-            converted = converted.replaceAll("<", "\\LeftRightarrow ");
+            converted = converted.replaceAll(">", "\\rightarrow ");
+            converted = converted.replaceAll("<", "\\leftrightarrow ");
             converted = converted.replaceAll("#", "\\oplus ");            
         }
             
