@@ -394,6 +394,9 @@ public class TruthTableGenerator extends Application {
 	 * Make the logic buttons and toggle buttons
 	 */
 	private void makeLogicButtons() {
+		Button  not = new Button();
+                not.setGraphic(new ImageView(ImageGetter.getTeXImage("\\lnot")));
+								
 		Button  and = new Button();
                 and.setGraphic(new ImageView(ImageGetter.getTeXImage("\\land")));
                 
@@ -401,10 +404,11 @@ public class TruthTableGenerator extends Application {
                 or.setGraphic(new ImageView(ImageGetter.getTeXImage("\\lor")));
                 
 		Button  imply = new Button();
-                imply.setGraphic(new ImageView(ImageGetter.getTeXImage("\\Rightarrow")));
+                imply.setGraphic(new ImageView(ImageGetter.getTeXImage("\\rightarrow")));
+								
+		Button  iff = new Button();
+                iff.setGraphic(new ImageView(ImageGetter.getTeXImage("\\leftrightarrow")));
                 
-		Button  not = new Button();
-                not.setGraphic(new ImageView(ImageGetter.getTeXImage("\\lnot")));
                 
 		Button  left = new Button();
                 left.setGraphic(new ImageView(ImageGetter.getTeXImage("(")));
@@ -413,7 +417,7 @@ public class TruthTableGenerator extends Application {
                 right.setGraphic(new ImageView(ImageGetter.getTeXImage(")")));
 		
 		buttonsRow.setSpacing(10);
-		buttonsRow.getChildren().addAll(and, or, imply, not, left, right, displayResponseSpeedButton, modeButton, displaySpeedButton);
+		buttonsRow.getChildren().addAll(not, and, or, imply, iff,left, right, displayResponseSpeedButton, modeButton, displaySpeedButton);
 		
 		and.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -451,6 +455,21 @@ public class TruthTableGenerator extends Application {
 				String exp1 = expression.getText().substring(0, caretLocation);
 				String exp2 = expression.getText().substring(caretLocation);
 				expression.setText(exp1 + " --> " + exp2);
+				caretLocation += 5;
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.positionCaret(caretLocation);
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
+			}
+		});
+		iff.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + " <-> " + exp2);
 				caretLocation += 5;
 				expression.requestFocus();
 				expression.deselect(); 
@@ -586,7 +605,7 @@ public class TruthTableGenerator extends Application {
 	 * Creates the expression bar and submit button
 	 */
 	private void makeExpressionBar() {
-		Button submit = new Button("GO");
+		Button submit = new Button("Evaluate");
 		expression.setPrefWidth(500);
 		expressionRow.getChildren().addAll(expression, submit);
 		
