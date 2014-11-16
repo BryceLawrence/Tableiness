@@ -401,7 +401,7 @@ public class TruthTableGenerator extends Application {
                 or.setGraphic(new ImageView(ImageGetter.getTeXImage("\\lor")));
                 
 		Button  imply = new Button();
-                imply.setGraphic(new ImageView(ImageGetter.getTeXImage("\\Rightarrow")));
+                imply.setGraphic(new ImageView(ImageGetter.getTeXImage("\\rightarrow")));
                 
 		Button  not = new Button();
                 not.setGraphic(new ImageView(ImageGetter.getTeXImage("\\lnot")));
