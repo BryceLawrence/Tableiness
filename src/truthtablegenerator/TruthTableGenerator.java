@@ -409,7 +409,6 @@ public class TruthTableGenerator extends Application {
 		Button  iff = new Button();
                 iff.setGraphic(new ImageView(ImageGetter.getTeXImage("\\leftrightarrow")));
                 
-                
 		Button  left = new Button();
                 left.setGraphic(new ImageView(ImageGetter.getTeXImage("(")));
                 
