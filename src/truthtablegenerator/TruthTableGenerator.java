@@ -4,14 +4,18 @@ import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -605,14 +609,33 @@ public class TruthTableGenerator extends Application {
 		});
 	}
 	
-	/**
+	 /**
+	 * Creates the table area
+	 */
+        private void makeTableArea() {
+            Table t = new Table();
+            TableView table = new TableView();
+            TableColumn p = new TableColumn("p");
+            TableColumn and = new TableColumn("and");
+            TableColumn q = new TableColumn("q");
+            table.getColumns().addAll(p, and, q);
+            final VBox tableVbox = new VBox();
+            tableVbox.setSpacing(5);
+            tableVbox.setPadding(new Insets(10, 0, 0, 10));
+            tableVbox.getChildren().addAll(table);
+        //    table.setItems(t.getFullTable());
+            tableArea.setCenter(table);
+        }
+        
+        
+        /**
 	 *	Make the main working area
 	 */
 	private void makeCenterArea() {
 		makeLogicButtons();
 		makeExpressionBar();
-		//make table area
-		centerArea.getChildren().addAll(buttonsRow, expressionRow);
+		makeTableArea();
+		centerArea.getChildren().addAll(buttonsRow, expressionRow,tableArea);
 		//add to centerArea
 	}
 	
@@ -657,5 +680,7 @@ public class TruthTableGenerator extends Application {
 	public static void main(String[] args) {
 		launch(args);
 	}
+
+   
 	
 }
