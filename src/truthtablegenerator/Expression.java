@@ -492,6 +492,6 @@ public class Expression {
 	}
 	
 	public static String getCompactExpression() {
-		return null;
+		return fullExpression.get(fullExpression.size() - 1);
 	}
 }
