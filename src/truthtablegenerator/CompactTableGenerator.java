@@ -21,6 +21,7 @@ public class CompactTableGenerator {
 	private void makeTable() {
 		int tableSize = (int) Math.pow(2 ,Expression.getVariableCount());
 		compactTable.clear();
+		displayOrder.clear();
 		String compactTableString = new String(Expression.getCompactExpression());
 		List<String> expressionRow = new ArrayList<>();
 		List<String> emptyRow = new ArrayList<>();
@@ -33,17 +34,17 @@ public class CompactTableGenerator {
 			emptyRow.add(" ");
 		}
 		
-		expressionRow.add("Result"); // add a result row to quickly see the result without finding the last step
-		emptyRow.add(" "); // add one more space for the result row
 		compactTable.add(expressionRow);
 		
-		for (int i = 1; i < tableSize; i++) {
-			compactTable.add(emptyRow);
+		for (int i = 0; i < tableSize; i++) {
+			// need to make a new unque instance or all "empty rows" are all the same and change together whenever one is edited
+			List<String> emptyRowUnique = new ArrayList<>(emptyRow);
+			compactTable.add(emptyRowUnique);
 		}
 		
 		
 		for(int i = 0; i < tableSize; i++) {
-			//calcRow(i);
+			calcRow(i, compactTableString);
 		}
 		
 		for (List<String> row : compactTable) {
@@ -52,10 +53,11 @@ public class CompactTableGenerator {
 	}
 	
 	/**
-	 * Calculates a single row, and adds its result to the fullTable
+	 * Prepares the String expression to be calculated.
 	 * @param step the current row being calculated
+	 * @param expression the expression to be evaluated
 	 */
-	private void calcFullRow(int step) {
+	private void calcRow(int step, String expression) {
 		int variableCount = Expression.getVariableCount();
 		
 		String binaryStep = Integer.toBinaryString(step);
@@ -63,33 +65,34 @@ public class CompactTableGenerator {
 			binaryStep = "0" + binaryStep;
 		}
 		
-		List <String> steps = new ArrayList<>(Expression.getFullExpression());
-		List<Integer> results = new ArrayList<>();
-		
-		for (int i = 0; i < variableCount; i++) {
-			results.add(Integer.parseInt(Character.toString(binaryStep.charAt(i))));
-		}
-		
-		for (int i = variableCount; i < steps.size(); i++) {
-			String currentStep = steps.get(i);
-			for (int j = 0; j < variableCount; j++) {
-				currentStep = currentStep.replace(steps.get(j).charAt(0), binaryStep.charAt(j));
+		int binaryCounter = binaryStep.length() - 1;
+		int expLength = expression.length();
+		for (int i = expression.length() - 1; i >= 0; i--) {
+			if (Character.isLetter(expression.charAt(i))) {
+				Character c = expression.charAt(i);
+				for (int j = i; j >= 0; j--) {
+					if (c.equals(expression.charAt(j))) {
+						compactTable.get(step + 1).set(j, Character.toString(binaryStep.charAt(binaryCounter)));
+						expression = expression.substring(0, j) + binaryStep.charAt(binaryCounter) + expression.substring(j + 1);
+					}
+				}
+				binaryCounter--;
 			}
-			results.add(Integer.parseInt(calcStep(currentStep)));
 		}
-		List<String> stringResults  = new ArrayList<>();
-		for (int r : results) {
-			stringResults.add(Integer.toString(r));
-		}
+		
+		int currentVar = binaryStep.length();
+		
+		calcStep(expression, 0, step + 1);
 		//fullTable.add(stringResults);
 	}
 	
 	/**
 	 * Calculates a single step. Recursively calculates parenthetical steps
+	 * @param startPoint the point to start the search. used for recursive calls. initial call should be 0.
 	 * @param step the step to calculate
-	 * @return 
+	 * @return string (used for recursion. not needed for original call.
 	 */
-	public String calcStep(String step) {
+	public String calcStep(String step, int s, int row) {
 		int endPoint = 0;
 		for (int i = 0; i < step.length(); i ++) {
 			if (step.charAt(i) == '(') {
@@ -103,47 +106,51 @@ public class CompactTableGenerator {
 						parCount--;
 					}
 				}
-				step =  step.substring(0, i) + calcStep(step.substring(i + 1, i + skip - 1)) + step.substring(i + skip);
+				String parStep = calcStep(step.substring(i + 1, i + skip - 1), i + 1 + s, row);
+				String result = Character.toString(parStep.charAt(0));
+				parStep += result + result; //the expression is all the same number. 
+				//add two more of that number to account for the parentheses
+				step =  step.substring(0, i) + parStep + step.substring(i + skip);
 			} 
 		}
 		endPoint = step.length();
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '~') {
-				step = step.substring(0, i) + BinaryMath.not(Character.getNumericValue(step.charAt(i + 1))) + step.substring(i + 2);
-				i -= 1;
-				endPoint -= 1;
+				String result = Integer.toString(BinaryMath.not(Character.getNumericValue(step.charAt(i + 1))));
+				step = step.substring(0, i) + result + result + step.substring(i + 2);
+				compactTable.get(row).set(i + s, result);
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '*') {
-				step = step.substring(0, i - 1) + BinaryMath.and(Character.getNumericValue(step.charAt(i - 1)), 
-						Character.getNumericValue(step.charAt(i + 1))) + step.substring(i + 2);
-				i -= 2;
-				endPoint -= 2;
+				String result = Integer.toString(BinaryMath.and(Character.getNumericValue(step.charAt(i - 1)), 
+						Character.getNumericValue(step.charAt(i + 1))));
+				step = step.substring(0, i - 1) +  result + result + result + step.substring(i + 2);
+				compactTable.get(row).set(i + s, result);
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '+') {
-				step = step.substring(0, i - 1) + BinaryMath.or(Character.getNumericValue(step.charAt(i - 1)), 
-						Character.getNumericValue(step.charAt(i + 1))) + step.substring(i + 2);
-				i -= 2;
-				endPoint -= 2;
+				String result = Integer.toString(BinaryMath.or(Character.getNumericValue(step.charAt(i - 1)), 
+						Character.getNumericValue(step.charAt(i + 1))));
+				step = step.substring(0, i - 1) +  result + result + result + step.substring(i + 2);
+				compactTable.get(row).set(i + s, result);
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '>') {
-				step = step.substring(0, i - 1) + BinaryMath.implies(Character.getNumericValue(step.charAt(i - 1)), 
-						Character.getNumericValue(step.charAt(i + 1))) + step.substring(i + 2);
-				i -= 2;
-				endPoint -= 2;
+				String result = Integer.toString(BinaryMath.implies(Character.getNumericValue(step.charAt(i - 1)), 
+						Character.getNumericValue(step.charAt(i + 1))));
+				step = step.substring(0, i - 1) +  result + result + result + step.substring(i + 2);
+				compactTable.get(row).set(i + s, result);
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '<') {
-				step = step.substring(0, i - 1) + BinaryMath.iff(Character.getNumericValue(step.charAt(i - 1)),
-						Character.getNumericValue(step.charAt(i + 1))) + step.substring(i + 2);
-				i -= 2;
-				endPoint -= 2;
+				String result = Integer.toString(BinaryMath.iff(Character.getNumericValue(step.charAt(i - 1)), 
+						Character.getNumericValue(step.charAt(i + 1))));
+				step = step.substring(0, i - 1) +  result + result + result + step.substring(i + 2);
+				compactTable.get(row).set(i + s, result);
 			}
 		}
 		return step;
@@ -161,4 +168,3 @@ public class CompactTableGenerator {
 		return compactTable;
 	}
 }
-

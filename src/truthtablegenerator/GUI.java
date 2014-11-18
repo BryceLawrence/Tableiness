@@ -32,7 +32,7 @@ import javafx.stage.Stage;
 /**
  * TruthTable FX class
  */
-public class TruthTableGenerator extends Application {
+public class GUI extends Application {
 	
 	/**
 	 *	Variables
@@ -581,9 +581,13 @@ public class TruthTableGenerator extends Application {
 
 			try {
 				if (Expression.validate()) {
-					FullTableGenerator t = new FullTableGenerator();
-					t.getTable();
-					//t.calcStep("(~0+~0+~0)*(0+0+0)", 0);
+					if (outputMode.equals("Full View")) {
+						FullTableGenerator t = new FullTableGenerator();
+						t.getTable();
+					} else {
+						CompactTableGenerator t = new CompactTableGenerator();
+						t.getTable();
+					}
 				}
 			} catch (ValidationException ex) {
 				// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
