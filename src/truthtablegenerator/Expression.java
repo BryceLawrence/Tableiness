@@ -10,6 +10,7 @@ import java.util.List;
  * A Singleton Class.
  */
 public class Expression {
+	private static final int MAX_VARIABLES = 6;
 	private static final Expression expression = new Expression(); // Eager singleton, NOT threadsafe
 	private static String enteredExpression = null;
 	private static String workableExpression = null;
@@ -18,6 +19,7 @@ public class Expression {
 	private static List <String> variableList = new ArrayList<>();
 	private static List <String> steps = new ArrayList<>();
 	private static List <String> fullExpression = new ArrayList<>();
+	private static ArrayList<Character> variables= new ArrayList<>();
 	
 	/**
 	 * A Singleton constructor
@@ -105,6 +107,7 @@ public class Expression {
 	 * @param unclosedCount number of left parentheses w/o right ones. if ever negative,  expression is FALSE.
 	 *		Initial pass in should be 0;
 	 * @param position the position in the String. Initial call should be 1
+	 * @throws ValidationException if there are any errors, an exception will be thrown
 	 * @return unclosedCount. If not 0, then the expression is invalid
 	 */
 	private static int invalidate(int unclosedCount) throws ValidationException{ //throws error codes
@@ -129,7 +132,7 @@ public class Expression {
 		int parCount = 0;
 		char checking;
 		char RHS;
-
+		
 		for (pos = 0; pos < workableExpression.length(); pos++) {
 			checking = workableExpression.charAt(pos);
 			//end of string
@@ -142,11 +145,9 @@ public class Expression {
 
 			RHS = workableExpression.charAt(pos + 1);
 
-			// unbalanced parentheses
-
-
 			// Main body of verification
 			if (Character.isLetter(checking)) {
+				addToVariables(checking);
 				if (RHS == '(' || RHS == '~') { 
 					throw new ValidationException("Missing Logical Operator at: " + pos);
 				} else if (Character.isLetter(RHS)) {
@@ -206,6 +207,24 @@ public class Expression {
 			throw new ValidationException("You have " + parCount + "more open parentheses than closed parentheses");
 		}
 		return unclosedCount;
+	}
+	
+	/**
+	 * checks is a supplied character is in the List variables. if not it is added, and then checks to see if the size of 
+	 * variables is greater than the maximum number of variables allowed. if it is, an exception is thrown
+	 * @param var the variable to check if is in variables
+	 * @throws ValidationException thrown if there are more variables than allowed
+	 */
+	private static void addToVariables(Character var) throws ValidationException {
+		for (Character c : variables) {
+			if ( c.equals(var)) {
+				return;
+			}
+		}
+		variables.add(var);
+		if (variables.size() > MAX_VARIABLES) {
+			throw new ValidationException("You have more than 6 variables");
+		}
 	}
 	
 	/**

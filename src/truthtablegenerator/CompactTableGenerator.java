@@ -46,7 +46,16 @@ public class CompactTableGenerator {
 		for(int i = 0; i < tableSize; i++) {
 			calcRow(i, compactTableString);
 		}
-		
+		//if the expression is a single character, display will be empty so add in a 0 to display the single character.
+		if (displayOrder.size() == 0) { 
+			displayOrder.add(0); 
+		}
+		System.out.println(displayOrder);
+		System.out.print('[');
+		for (int i = 0; i < compactTableString.length(); i ++) {
+			System.out.print(i + ", ");
+		}
+		System.out.println();
 		for (List<String> row : compactTable) {
 			System.out.println(row);
 		}
@@ -113,12 +122,20 @@ public class CompactTableGenerator {
 				step =  step.substring(0, i) + parStep + step.substring(i + skip);
 			} 
 		}
+		String expression = Expression.getCompactExpression();
 		endPoint = step.length();
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '~') {
 				String result = Integer.toString(BinaryMath.not(Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i) + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				
+				//if the RHS is a letter (not a '(' ) then add it to the order
+				if (Character.isLetter(expression.charAt(i + 1 + s))) {
+					addToOrder(i + 1 + s);
+				}
+				//then add the negation regardless
+				addToOrder(i + s);
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -127,6 +144,17 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) +  result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				
+				//if the LHS is a letter (not a ')' ) then add it to the order
+				if (Character.isLetter(expression.charAt(i - 1 + s))) {
+					addToOrder(i - 1 + s);
+				}
+				//if the RHS is a letter (not a '(' ) then add it to the order
+				if (Character.isLetter(expression.charAt(i + 1 + s))) {
+					addToOrder(i + 1 + s);
+				}
+				//then add the AND regardless
+				addToOrder(i + s);
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -135,6 +163,20 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) +  result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				//if the LHS is a letter (not a ')' ) then add it to the order
+				if (Character.isLetter(expression.charAt(i - 1 + s))) {
+					System.out.println(expression.charAt(i - 1 + s) + " at " + (i - 1 + s));
+					addToOrder(i - 1 + s);
+				}
+				//if the RHS is a letter (not a '(' ) then add it to the order
+				if (Character.isLetter(expression.charAt(i + 1 + s))) {
+					
+					System.out.println(expression.charAt(i +1 + s) + " at " + (i + 1 + s));
+					addToOrder(i + 1 + s);
+				}
+				//then add the OR regardless
+				System.out.println("or at " + ( i + s));
+				addToOrder(i + s);
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -143,6 +185,16 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) +  result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				//if the LHS is a letter (not a ')' ) then add it to the order
+				if (Character.isLetter(expression.charAt(i - 1 + s))) {
+					addToOrder(i - 1 + s);
+				}
+				//if the RHS is a letter (not a '(' ) then add it to the order
+				if (Character.isLetter(expression.charAt(i + 1 + s))) {
+					addToOrder(i + 1 + s);
+				}
+				//then add the IMP regardless
+				addToOrder(i + s);
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -151,11 +203,37 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) +  result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				//if the LHS is a letter (not a ')' ) then add it to the order
+				if (Character.isLetter(expression.charAt(i - 1 + s))) {
+					addToOrder(i - 1 + s);
+				}
+				//if the RHS is a letter (not a '(' ) then add it to the order
+				if (Character.isLetter(expression.charAt(i + 1 + s))) {
+					addToOrder(i + 1 + s);
+				}
+				//then add the IFF regardless
+				addToOrder(i + s);
 			}
 		}
 		return step;
 	}
 	
+	/**
+	 * checks if a position is already in displayOrder. if it isnt, it is the next step so it adds it to the end of the List displayOrder
+	 * @param position 
+	 */
+	public void addToOrder(int position) {
+		for (Integer i : displayOrder) {
+			if (i == position) {
+				return;
+			}
+		}
+		displayOrder.add(position);
+	}
+	
+	public List<Integer> getDisplayOrder() {
+		return displayOrder;
+	}
 	/**
 	 * Generates the Compact Table and then returns it
 	 * The CompactTable is a two dimensional List, or a list of lists broken up by ROWS of elements

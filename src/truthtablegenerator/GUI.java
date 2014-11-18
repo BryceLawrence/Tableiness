@@ -43,10 +43,11 @@ public class GUI extends Application {
 			private Menu modeMenu = new Menu("Mode");
 			private Menu helpMenu = new Menu("Help");
 		private VBox centerArea = new VBox();
-			private HBox buttonsRow = new HBox();
+			private HBox toggleButtonRow = new HBox();
 				private Button displayResponseSpeedButton = new Button("Batch Entry");
 				private Button displaySpeedButton = new Button("Step Mode");
 				private Button modeButton = new Button("Compact View");
+			private HBox logicButtonRow = new HBox();
 			private HBox expressionRow = new HBox();
 				private TextField expression = new TextField();
 			private BorderPane tableArea = new BorderPane();
@@ -390,8 +391,58 @@ public class GUI extends Application {
 		menuBar.getMenus().addAll(fileMenu, modeMenu, helpMenu); // put it together
 	}
 	
+	private void makeToggleButtons() {
+		
+		toggleButtonRow.getChildren().addAll(displayResponseSpeedButton, modeButton, displaySpeedButton);
+		displayResponseSpeedButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				if(outputResponseSpeed.equals("Batch Entry")) {
+					outputResponseSpeed = "Dynamic Entry";
+					displayResponseSpeedButton.setText(outputResponseSpeed);
+				} else {
+					outputResponseSpeed = "Batch Entry";
+					displayResponseSpeedButton.setText(outputResponseSpeed);
+				}		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.positionCaret(caretLocation);
+			}
+		});
+		
+		modeButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				if(outputMode.equals("Full View")) {
+					outputMode = "Compact View";
+					modeButton.setText(outputMode);
+				} else {
+					outputMode = "Full View";
+					modeButton.setText(outputMode);
+				}		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.positionCaret(caretLocation);
+			}
+		});
+		displaySpeedButton.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				if(outputDisplaySpeed.equals("Instant Mode")) {
+					outputDisplaySpeed = "Step Mode";
+					displaySpeedButton.setText(outputDisplaySpeed);
+				} else {
+					outputDisplaySpeed = "Instant Mode";
+					displaySpeedButton.setText(outputDisplaySpeed);
+				}		
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.positionCaret(caretLocation);
+			}
+		});
+	}
 	/**
-	 * Make the logic buttons and toggle buttons
+	 * Make the logic buttons
 	 */
 	private void makeLogicButtons() {
 		Button  not = new Button();
@@ -414,9 +465,16 @@ public class GUI extends Application {
                 
 		Button  right = new Button();
                 right.setGraphic(new ImageView(ImageGetter.getTeXImage(")")));
+								
+		Button p = new Button("p");
+		Button q = new Button("q");
+		Button r = new Button("r");
+		Button s = new Button("s");
+		Button t = new Button("t");
+		Button u = new Button("u");
 		
-		buttonsRow.setSpacing(10);
-		buttonsRow.getChildren().addAll(not, and, or, imply, iff,left, right, displayResponseSpeedButton, modeButton, displaySpeedButton);
+		logicButtonRow.setSpacing(5);
+		logicButtonRow.getChildren().addAll(not, and, or, imply, iff,left, right, p, q, r, s, t, u);
 		
 		and.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -523,50 +581,95 @@ public class GUI extends Application {
 				}
 			}
 		});
-		displayResponseSpeedButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
-				if(outputResponseSpeed.equals("Batch Entry")) {
-					outputResponseSpeed = "Dynamic Entry";
-					displayResponseSpeedButton.setText(outputResponseSpeed);
-				} else {
-					outputResponseSpeed = "Batch Entry";
-					displayResponseSpeedButton.setText(outputResponseSpeed);
-				}		
-				expression.requestFocus();
-				expression.deselect(); 
-				expression.positionCaret(caretLocation);
-			}
-		});
 		
-		modeButton.setOnAction(new EventHandler<ActionEvent>() {
+		p.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				if(outputMode.equals("Full View")) {
-					outputMode = "Compact View";
-					modeButton.setText(outputMode);
-				} else {
-					outputMode = "Full View";
-					modeButton.setText(outputMode);
-				}		
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + "p" + exp2);
+				caretLocation += 1;
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
 			}
-		});
-		displaySpeedButton.setOnAction(new EventHandler<ActionEvent>() {
+		});	
+		q.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				if(outputDisplaySpeed.equals("Instant Mode")) {
-					outputDisplaySpeed = "Step Mode";
-					displaySpeedButton.setText(outputDisplaySpeed);
-				} else {
-					outputDisplaySpeed = "Instant Mode";
-					displaySpeedButton.setText(outputDisplaySpeed);
-				}		
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + "q" + exp2);
+				caretLocation += 1;
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
+			}
+		});	
+		r.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + "r" + exp2);
+				caretLocation += 1;
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.positionCaret(caretLocation);
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
+			}
+		});	
+		s.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + "s" + exp2);
+				caretLocation += 1;
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.positionCaret(caretLocation);
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
+			}
+		});	
+		t.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + "t" + exp2);
+				caretLocation += 1;
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.positionCaret(caretLocation);
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
+			}
+		});	
+		u.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				String exp1 = expression.getText().substring(0, caretLocation);
+				String exp2 = expression.getText().substring(caretLocation);
+				expression.setText(exp1 + "u" + exp2);
+				caretLocation += 1;
+				expression.requestFocus();
+				expression.deselect(); 
+				expression.positionCaret(caretLocation);
+				if (outputResponseSpeed.equals("Dynamic Entry")) {
+					submitExpression(false);
+				}
 			}
 		});
 	}
@@ -642,10 +745,11 @@ public class GUI extends Application {
 	 *	Make the main working area
 	 */
 	private void makeCenterArea() {
+		makeToggleButtons();
 		makeLogicButtons();
 		makeExpressionBar();
 		//make table area
-		centerArea.getChildren().addAll(buttonsRow, expressionRow);
+		centerArea.getChildren().addAll(toggleButtonRow, logicButtonRow, expressionRow);
 		//add to centerArea
 	}
 	
