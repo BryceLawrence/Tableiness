@@ -165,17 +165,13 @@ public class CompactTableGenerator {
 				compactTable.get(row).set(i + s, result);
 				//if the LHS is a letter (not a ')' ) then add it to the order
 				if (Character.isLetter(expression.charAt(i - 1 + s))) {
-					System.out.println(expression.charAt(i - 1 + s) + " at " + (i - 1 + s));
 					addToOrder(i - 1 + s);
 				}
 				//if the RHS is a letter (not a '(' ) then add it to the order
 				if (Character.isLetter(expression.charAt(i + 1 + s))) {
-					
-					System.out.println(expression.charAt(i +1 + s) + " at " + (i + 1 + s));
 					addToOrder(i + 1 + s);
 				}
 				//then add the OR regardless
-				System.out.println("or at " + ( i + s));
 				addToOrder(i + s);
 			}
 		}

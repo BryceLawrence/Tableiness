@@ -148,6 +148,9 @@ public class Expression {
 			// Main body of verification
 			if (Character.isLetter(checking)) {
 				addToVariables(checking);
+				if (pos > 0 && RHS == ')' && workableExpression.charAt(pos - 1) == '(') {
+					throw new ValidationException("Unneeded parentheses around variable at: " + pos);
+				}
 				if (RHS == '(' || RHS == '~') { 
 					throw new ValidationException("Missing Logical Operator at: " + pos);
 				} else if (Character.isLetter(RHS)) {

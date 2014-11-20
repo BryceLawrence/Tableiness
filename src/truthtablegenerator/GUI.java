@@ -80,8 +80,19 @@ public class GUI extends Application {
 				stage.close();
 				}
 		});
+		
+		Scene scene = new Scene(pane, 250, 150);
+		scene.getAccelerators().put(
+			new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_ANY), 
+			new Runnable() {
+				@Override public void run() {
+					b.fire();
+				}
+			}
+		);
+		
 		stage.setTitle("Error in Expression");
-		stage.setScene(new Scene(pane, 250, 150));
+		stage.setScene(scene);
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.showAndWait();
 	}
@@ -446,32 +457,38 @@ public class GUI extends Application {
 	 */
 	private void makeLogicButtons() {
 		Button  not = new Button();
-                not.setGraphic(new ImageView(ImageGetter.getTeXImage("\\lnot")));
+			not.setGraphic(new ImageView(ImageGetter.getTeXImage("\\lnot")));
 								
 		Button  and = new Button();
-                and.setGraphic(new ImageView(ImageGetter.getTeXImage("\\land")));
+			and.setGraphic(new ImageView(ImageGetter.getTeXImage("\\land")));
                 
 		Button  or = new Button();
-                or.setGraphic(new ImageView(ImageGetter.getTeXImage("\\lor")));
+			or.setGraphic(new ImageView(ImageGetter.getTeXImage("\\lor")));
                 
 		Button  imply = new Button();
-                imply.setGraphic(new ImageView(ImageGetter.getTeXImage("\\rightarrow")));
+			imply.setGraphic(new ImageView(ImageGetter.getTeXImage("\\rightarrow")));
 								
 		Button  iff = new Button();
-                iff.setGraphic(new ImageView(ImageGetter.getTeXImage("\\leftrightarrow")));
+			iff.setGraphic(new ImageView(ImageGetter.getTeXImage("\\leftrightarrow")));
                 
 		Button  left = new Button();
-                left.setGraphic(new ImageView(ImageGetter.getTeXImage("(")));
+			left.setGraphic(new ImageView(ImageGetter.getTeXImage("(")));
                 
 		Button  right = new Button();
-                right.setGraphic(new ImageView(ImageGetter.getTeXImage(")")));
+			right.setGraphic(new ImageView(ImageGetter.getTeXImage(")")));
 								
-		Button p = new Button("p");
-		Button q = new Button("q");
-		Button r = new Button("r");
-		Button s = new Button("s");
-		Button t = new Button("t");
-		Button u = new Button("u");
+		Button p = new Button();
+			p.setGraphic(new ImageView(ImageGetter.getTeXImage("p")));
+		Button q = new Button();
+			q.setGraphic(new ImageView(ImageGetter.getTeXImage("q")));
+		Button r = new Button();
+			r.setGraphic(new ImageView(ImageGetter.getTeXImage("r")));
+		Button s = new Button();
+			s.setGraphic(new ImageView(ImageGetter.getTeXImage("s")));
+		Button t = new Button();
+			t.setGraphic(new ImageView(ImageGetter.getTeXImage("t")));
+		Button u = new Button();
+			u.setGraphic(new ImageView(ImageGetter.getTeXImage("u")));
 		
 		logicButtonRow.setSpacing(5);
 		logicButtonRow.getChildren().addAll(not, and, or, imply, iff,left, right, p, q, r, s, t, u);
