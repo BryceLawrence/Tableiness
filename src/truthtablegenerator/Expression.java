@@ -14,7 +14,6 @@ public class Expression {
 	private static final Expression expression = new Expression(); // Eager singleton, NOT threadsafe
 	private static String enteredExpression = null;
 	private static String workableExpression = null;
-	private static String lastWorkableExpression = null;
 	private static int variableCount = 0;
 	private static List <String> variableList = new ArrayList<>();
 	private static List <String> steps = new ArrayList<>();
@@ -67,8 +66,6 @@ public class Expression {
 	public static boolean validate() throws ValidationException { //needs to throw error codes for display
 		cleanup(); // prepares the expression to be worked on
 		if (invalidate(0) == 0) { // no open parentheses yet and start at spot 1. (0 is an "@")
-			// for checking differences between entries
-			lastWorkableExpression = new String(workableExpression);
 			//need to reset the lists so that they dont just stack onto old expressions
 			variableList.clear();
 			steps.clear();
@@ -89,8 +86,6 @@ public class Expression {
 		setEnteredExpression(expression);
 		cleanup(); // prepares the expression to be worked on
 		if (invalidate(0) == 0) { // no open parentheses yet and start at spot 1. (0 is an "@")
-			// for checking differences between entries
-			lastWorkableExpression = new String(workableExpression);
 			//need to reset the lists so that they dont just stack onto old expressions
 			variableList.clear();
 			steps.clear();
@@ -120,10 +115,6 @@ public class Expression {
 		// by itself evaluates to an empty expression)
 		if (workableExpression.equals("@1@") || workableExpression.equals("@1@")) {
 			throw new ValidationException("Expression Must Contain \nMore Than a Single Constant");
-		}
-		//dont validate an expression that is the same as the last one.
-		if (workableExpression.equals(lastWorkableExpression)) {
-			throw new ValidationException("Same");
 		}
 		int pos;
 		// Note on position. Our string has an '@' at position 0, so the users

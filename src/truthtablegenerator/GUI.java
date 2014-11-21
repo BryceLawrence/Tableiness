@@ -44,18 +44,18 @@ public class GUI extends Application {
 			private Menu helpMenu = new Menu("Help");
 		private VBox centerArea = new VBox();
 			private HBox toggleButtonRow = new HBox();
-				private Button displayResponseSpeedButton = new Button("Batch Entry");
-				private Button displaySpeedButton = new Button("Step Mode");
-				private Button modeButton = new Button("Compact View");
+				private Button displayResponseSpeedButton = new Button();
+				private Button displaySpeedButton = new Button();
+				private Button modeButton = new Button();
 			private HBox logicButtonRow = new HBox();
 			private HBox expressionRow = new HBox();
 				private TextField expression = new TextField();
 			private BorderPane tableArea = new BorderPane();
 	
 	// output mode variables
-	private String outputDisplaySpeed = new String("Step Mode");
-	private String outputResponseSpeed = new String("Batch Entry");
-	private String outputMode = new String("Compact View");
+	private String outputDisplaySpeed = new String("Instant");
+	private String outputResponseSpeed = new String("Batch");
+	private String outputMode = new String("Compact");
 	
 	int caretLocation;
 	
@@ -258,11 +258,17 @@ public class GUI extends Application {
 				
 				//some table updater
 				
-				outputResponseSpeed = "Batch Entry";
-				displayResponseSpeedButton.setText("Batch Entry");
+				outputResponseSpeed = "Batch";
+				displayResponseSpeedButton.setGraphic(
+					new ImageView(ImageGetter.getTeXImage("Batch \\leftarrow Dynamic")));
 				
-				outputMode = "Compact View";
-				modeButton.setText("Compact View");
+				outputMode = "Compact";
+				modeButton.setGraphic(
+					new ImageView(ImageGetter.getTeXImage("Compact \\leftarrow Full")));
+				
+				outputDisplaySpeed = "Instant";
+				displaySpeedButton.setGraphic(
+					new ImageView(ImageGetter.getTeXImage("instant \\leftarrow Step")));
 			}
 		});
 		
@@ -305,51 +311,63 @@ public class GUI extends Application {
 		MenuItem step = new MenuItem("Step Display");
 		
 		
-		modeMenu.getItems().addAll(compact, full, batch, dynamic, step, instant);
+		modeMenu.getItems().addAll(compact, full, batch, dynamic, instant, step);
 		
 		//START MODE EVENT HANDLING
 		
 		compact.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				outputMode = "Compact View";
-				modeButton.setText("Compact View");
+				outputMode = "Compact";
+				modeButton.setGraphic(
+				new ImageView(ImageGetter.getTeXImage("Compact \\leftarrow Full")));
+				if (outputResponseSpeed.equals("Dynamic")) {
+					submitExpression(false);
+				}
 			}
 		});
 		
 		full.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				outputMode = "Full View";
-				modeButton.setText("Full View");
+				outputMode = "Full";
+				modeButton.setGraphic(
+				new ImageView(ImageGetter.getTeXImage("Compact \\rightarrow Full")));
+				if (outputResponseSpeed.equals("Dynamic")) {
+					submitExpression(false);
+				}
 			}
 		});
 		batch.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				outputResponseSpeed = "Batch Entry";
-				displayResponseSpeedButton.setText("Batch Entry");
+				outputResponseSpeed = "Batch";
+				displayResponseSpeedButton.setGraphic(
+				new ImageView(ImageGetter.getTeXImage("Batch \\leftarrow Dynamic")));
 			}
 		});
 		dynamic.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				outputResponseSpeed = "Dynamic Entry";
-				displayResponseSpeedButton.setText("Dynamic Entry");
+				outputResponseSpeed = "Dynamic";
+				displayResponseSpeedButton.setGraphic(
+				new ImageView(ImageGetter.getTeXImage("Batch \\rightarrow Dynamic")));
 			}
 		});
 		step.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				outputDisplaySpeed = "Step Mode";
-				displaySpeedButton.setText("Step Mode");
+				outputDisplaySpeed = "Step";
+				displaySpeedButton.setGraphic(
+				new ImageView(ImageGetter.getTeXImage("Instant \\rightarrow Step")));
 			}
 		});
 		instant.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				outputDisplaySpeed = "Instant Mode";
-				displaySpeedButton.setText("Instant Mode");
+				outputDisplaySpeed = "Instant";
+				displaySpeedButton.setGraphic(
+				new ImageView(ImageGetter.getTeXImage("Instant \\leftarrow Step")));
 			}
 		});
 		
@@ -403,17 +421,26 @@ public class GUI extends Application {
 	}
 	
 	private void makeToggleButtons() {
+
+		displaySpeedButton.setGraphic(
+				new ImageView(ImageGetter.getTeXImage("Instant \\leftarrow Step")));
+		modeButton.setGraphic(
+				new ImageView(ImageGetter.getTeXImage("Compact \\leftarrow Full")));
+		displayResponseSpeedButton.setGraphic(
+				new ImageView(ImageGetter.getTeXImage("Batch \\leftarrow Dynamic")));
 		
 		toggleButtonRow.getChildren().addAll(displayResponseSpeedButton, modeButton, displaySpeedButton);
 		displayResponseSpeedButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				if(outputResponseSpeed.equals("Batch Entry")) {
-					outputResponseSpeed = "Dynamic Entry";
-					displayResponseSpeedButton.setText(outputResponseSpeed);
+				if(outputResponseSpeed.equals("Batch")) {
+					outputResponseSpeed = "Dynamic";
+					displayResponseSpeedButton.setGraphic(
+							new ImageView(ImageGetter.getTeXImage("Batch \\rightarrow Dynamic")));
 				} else {
-					outputResponseSpeed = "Batch Entry";
-					displayResponseSpeedButton.setText(outputResponseSpeed);
+					outputResponseSpeed = "Batch";
+					displayResponseSpeedButton.setGraphic(
+							new ImageView(ImageGetter.getTeXImage("Batch \\leftarrow Dynamic")));
 				}		
 				expression.requestFocus();
 				expression.deselect(); 
@@ -424,13 +451,18 @@ public class GUI extends Application {
 		modeButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				if(outputMode.equals("Full View")) {
-					outputMode = "Compact View";
-					modeButton.setText(outputMode);
+				if(outputMode.equals("Full")) {
+					outputMode = "Compact";
+					modeButton.setGraphic(
+							new ImageView(ImageGetter.getTeXImage("Compact \\leftarrow Full")));
 				} else {
-					outputMode = "Full View";
-					modeButton.setText(outputMode);
-				}		
+					outputMode = "Full";
+					modeButton.setGraphic(
+							new ImageView(ImageGetter.getTeXImage("Compact \\rightarrow Full")));
+				}				
+				if (outputResponseSpeed.equals("Dynamic")) {
+					submitExpression(false);
+				}
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
@@ -439,12 +471,14 @@ public class GUI extends Application {
 		displaySpeedButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				if(outputDisplaySpeed.equals("Instant Mode")) {
-					outputDisplaySpeed = "Step Mode";
-					displaySpeedButton.setText(outputDisplaySpeed);
+				if(outputDisplaySpeed.equals("Instant")) {
+					outputDisplaySpeed = "Step";
+					displaySpeedButton.setGraphic(
+							new ImageView(ImageGetter.getTeXImage("Instant \\rightarrow Step")));
 				} else {
-					outputDisplaySpeed = "Instant Mode";
-					displaySpeedButton.setText(outputDisplaySpeed);
+					outputDisplaySpeed = "Instant";
+					displaySpeedButton.setGraphic(
+							new ImageView(ImageGetter.getTeXImage("Instant \\leftarrow Step")));
 				}		
 				expression.requestFocus();
 				expression.deselect(); 
@@ -478,7 +512,7 @@ public class GUI extends Application {
 			right.setGraphic(new ImageView(ImageGetter.getTeXImage(")")));
 								
 		Button p = new Button();
-			p.setGraphic(new ImageView(ImageGetter.getTeXImage("p")));
+			p.setGraphic(new ImageView(ImageGetter.getTeXImage("\\ p")));
 		Button q = new Button();
 			q.setGraphic(new ImageView(ImageGetter.getTeXImage("q")));
 		Button r = new Button();
@@ -503,7 +537,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -518,7 +552,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -533,7 +567,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -548,7 +582,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -563,7 +597,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -578,7 +612,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -593,7 +627,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -609,7 +643,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -624,7 +658,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -639,7 +673,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -654,7 +688,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -669,7 +703,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -684,7 +718,7 @@ public class GUI extends Application {
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
@@ -701,7 +735,7 @@ public class GUI extends Application {
 
 			try {
 				if (Expression.validate()) {
-					if (outputMode.equals("Full View")) {
+					if (outputMode.equals("Full")) {
 						FullTableGenerator t = new FullTableGenerator();
 						t.getTable();
 					} else {
@@ -736,7 +770,7 @@ public class GUI extends Application {
 			@Override
 			public void handle(KeyEvent event) {
 				caretLocation = expression.getCaretPosition();
-				if (outputResponseSpeed.equals("Dynamic Entry")) {
+				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
 				}
 			}
