@@ -175,7 +175,7 @@ public class GUI extends Application {
 		
 		MenuItem load = new MenuItem("Load Expression");
 		MenuItem saveExpression = new MenuItem("Save Expression");
-		MenuItem saveTable = new MenuItem("Save TT");
+		MenuItem saveTable = new MenuItem("Save LaTeX Table");
 		MenuItem reset = new MenuItem("Reset Fields");
 		MenuItem exit = new MenuItem("Exit");
 		
@@ -246,7 +246,10 @@ public class GUI extends Application {
 				
 				File file = fc.showSaveDialog(primaryStage);
 				if(file != null) {
-					//DO STUFF HERE
+					FileIO f = new FileIO();
+                                        FullTableGenerator ft = new FullTableGenerator();
+                                        CompactTableGenerator ct = new CompactTableGenerator();
+                                        f.saveLaTeXTable(file.toString(), ct.getTable(), ft.getTable());
 				}
 			}
 		});
