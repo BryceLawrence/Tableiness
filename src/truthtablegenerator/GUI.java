@@ -245,14 +245,30 @@ public class GUI extends Application {
 				FileChooser fc = fcb.title("Save Table").initialDirectory(new File(currentDir)).build();
 				
 				File file = fc.showSaveDialog(primaryStage);
-				if(file != null) {
-					FileIO f = new FileIO();
-                                        FullTableGenerator ft = new FullTableGenerator();
-                                        CompactTableGenerator ct = new CompactTableGenerator();
-                                        f.saveLaTeXTable(file.toString(), ct.getTable(), ft.getTable());
-				}
-			}
-		});
+				
+                                if(file != null) {
+                                    if (Expression.expressionExists()) {
+                                        try {
+                                            Expression.validate();
+                               
+                                            FileIO f = new FileIO();
+                                            FullTableGenerator ft = new FullTableGenerator();
+                                            CompactTableGenerator ct = new CompactTableGenerator();
+                                            f.saveLaTeXTable(file.toString(), ct.getTable(), ft.getTable());
+                                        } catch (ValidationException e) {
+                                            createErrorBox("Cannot Save Table for Invalid Expression");
+                                            System.out.println("Cannot Save Table for Invalid Expression");
+                                        }
+                                        
+                                        
+                                    } else {
+                                        createErrorBox("Cannont Save Table for Empty Expression");
+					System.out.println("Cannot Save Table for Empty Expression");
+                                    }
+
+                                }     
+                    }
+                });
 		
 		reset.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
