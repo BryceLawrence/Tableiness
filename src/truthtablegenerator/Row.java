@@ -1,3 +1,5 @@
+package truthtablegenerator;
+
 
 import java.util.List;
 import javafx.beans.property.StringProperty;
