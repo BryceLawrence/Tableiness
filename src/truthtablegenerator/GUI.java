@@ -1,9 +1,15 @@
 package truthtablegenerator;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -16,6 +22,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -30,6 +37,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooserBuilder;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 /**
  * TruthTable FX class
@@ -793,6 +801,7 @@ public class GUI extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 				submitExpression(true);
+                                makeTableDisplay();
 			}
 		});
 	}
@@ -802,13 +811,21 @@ public class GUI extends Application {
 	 */
         private void makeTableDisplay() {
             FullTableGenerator tempTable = new FullTableGenerator();
-            tempTable.getTable();
-            final TableView<FullTableGenerator> tableView = new TableView<>();
-            final TableColumn variableOne = new TableColumn("p");
-            final TableColumn variableTwo = new TableColumn("^");
-            final TableColumn variableThree = new TableColumn("q");
-
-
+            ObservableList<List<String>> tableColumnList = FXCollections.observableArrayList(tempTable.getTable());
+            TableView<TableColumn> tableView =  new TableView<TableColumn>();
+            for (List<String> list : tableColumnList) {
+                List<String> headlessList = new ArrayList<>();
+                for(int i = 1; i < list.size(); i++) {
+                    headlessList.add(list.get(i));
+                }
+                ObservableList<String> tableColumn = FXCollections.observableArrayList(headlessList);
+                TableColumn column = new TableColumn();
+        //        column.setCellFactory(
+          //                  new PropertyValueFactory<tableColumn, String> (list.get(0)));
+                tableView.getColumns().add(column); 
+            }
+            //tableView.setItems(tableColumnList);
+           tableArea.setCenter(tableView);
         }
         
         
@@ -820,8 +837,8 @@ public class GUI extends Application {
 		makeToggleButtons();
 		makeLogicButtons();
 		makeExpressionBar();
-		//make table area
-		centerArea.getChildren().addAll(toggleButtonRow, logicButtonRow, expressionRow);
+		makeTableDisplay();
+		centerArea.getChildren().addAll(toggleButtonRow, logicButtonRow, expressionRow,tableArea);
 		//add to centerArea
 	}
 	
