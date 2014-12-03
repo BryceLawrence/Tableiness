@@ -512,7 +512,7 @@ public class GUI extends Application {
 			right.setGraphic(new ImageView(ImageGetter.getTeXImage(")")));
 								
 		Button p = new Button();
-			p.setGraphic(new ImageView(ImageGetter.getTeXImage("\\ p")));
+			p.setGraphic(new ImageView(ImageGetter.getTeXImage("p")));
 		Button q = new Button();
 			q.setGraphic(new ImageView(ImageGetter.getTeXImage("q")));
 		Button r = new Button();
