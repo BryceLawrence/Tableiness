@@ -12,6 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -794,7 +796,23 @@ public class GUI extends Application {
 			}
 		});
 	}
-	
+
+        /**
+	 * Displays the created table for the submitted expression
+	 */
+        private void makeTableDisplay() {
+            FullTableGenerator tempTable = new FullTableGenerator();
+            tempTable.getTable();
+            final TableView<FullTableGenerator> tableView = new TableView<>();
+            final TableColumn variableOne = new TableColumn("p");
+            final TableColumn variableTwo = new TableColumn("^");
+            final TableColumn variableThree = new TableColumn("q");
+
+
+        }
+        
+        
+        
 	/**
 	 *	Make the main working area
 	 */
