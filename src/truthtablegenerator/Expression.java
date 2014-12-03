@@ -19,7 +19,6 @@ public class Expression {
 	private static List <String> steps = new ArrayList<>();
 	private static List <String> fullExpression = new ArrayList<>();
 	private static ArrayList<Character> variables= new ArrayList<>();
-	
 	/**
 	 * A Singleton constructor
 	 */
@@ -507,4 +506,11 @@ public class Expression {
 	public static String getCompactExpression() {
 		return fullExpression.get(fullExpression.size() - 1);
 	}
+        
+        public static Boolean expressionExists() {
+            if (workableExpression == null) {
+                return false;
+            }
+            return true;
+        }
 }
