@@ -2,16 +2,15 @@ package truthtablegenerator;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Observable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.application.Application;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -19,10 +18,10 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -32,6 +31,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooserBuilder;
@@ -60,7 +60,8 @@ public class GUI extends Application {
 			private HBox logicButtonRow = new HBox();
 			private HBox expressionRow = new HBox();
 				private TextField expression = new TextField();
-			private BorderPane tableArea = new BorderPane();
+			//private VBox tableArea = new VBox();
+                        private BorderPane tableArea = new BorderPane();
 	
 	// output mode variables
 	private String outputDisplaySpeed = new String("Instant");
@@ -514,8 +515,11 @@ public class GUI extends Application {
 				expression.positionCaret(caretLocation);
 			}
 		});
+                toggleButtonRow.setSpacing(14);
+                toggleButtonRow.setPadding(new Insets(0,0,7,0));
 	}
-	/**
+	
+        /**
 	 * Make the logic buttons
 	 */
 	private void makeLogicButtons() {
@@ -553,7 +557,8 @@ public class GUI extends Application {
 		Button u = new Button();
 			u.setGraphic(new ImageView(ImageGetter.getTeXImage("u")));
 		
-		logicButtonRow.setSpacing(5);
+		logicButtonRow.setSpacing(14);
+                logicButtonRow.setPadding(new Insets(0,0,7,0));
 		logicButtonRow.getChildren().addAll(not, and, or, imply, iff,left, right, p, q, r, s, t, u);
 		
 		and.setOnAction(new EventHandler<ActionEvent>() {
@@ -764,13 +769,15 @@ public class GUI extends Application {
 
 			try {
 				if (Expression.validate()) {
-					if (outputMode.equals("Full")) {
+					/*if (outputMode.equals("Full")) {
 						FullTableGenerator t = new FullTableGenerator();
 						t.getTable();
 					} else {
 						CompactTableGenerator t = new CompactTableGenerator();
 						t.getTable();
-					}
+					}*/
+                                    //need to clear table display first.
+                                    makeTableDisplay();
 				}
 			} catch (ValidationException ex) {
 				// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
@@ -792,7 +799,7 @@ public class GUI extends Application {
 	 */
 	private void makeExpressionBar() {
 		Button submit = new Button("Evaluate");
-		expression.setPrefWidth(500);
+		//expression.setPrefWidth(500);
 		expressionRow.getChildren().addAll(expression, submit);
 		
 		expression.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -811,13 +818,14 @@ public class GUI extends Application {
 				caretLocation = expression.getCaretPosition();
 			}
 		});
-		
+		     
+                expressionRow.setHgrow(expression, Priority.ALWAYS);
+
 		
 		submit.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
 				submitExpression(true);
-                                makeTableDisplay();
 			}
 		});
 	}
@@ -826,25 +834,48 @@ public class GUI extends Application {
 	 * Displays the created table for the submitted expression
 	 */
         private void makeTableDisplay() {
-            FullTableGenerator tempTable = new FullTableGenerator();
-            ObservableList<List<String>> tableColumnList = FXCollections.observableArrayList(tempTable.getTable());
-            TableView<TableColumn> tableView =  new TableView<TableColumn>();
-            for (List<String> list : tableColumnList) {
-                List<String> headlessList = new ArrayList<>();
-                for(int i = 1; i < list.size(); i++) {
-                    headlessList.add(list.get(i));
-                }
-                ObservableList<String> tableColumn = FXCollections.observableArrayList(headlessList);
-                TableColumn column = new TableColumn();
-        //        column.setCellFactory(
-          //                  new PropertyValueFactory<tableColumn, String> (list.get(0)));
+            List<List<String>> table = null;
+            
+            //switch to handle the selected mode
+            if (outputMode.equals("Compact")) {
+            CompactTableGenerator compTable = new CompactTableGenerator();
+            table = compTable.getTable();
+            }
+
+            else {
+            FullTableGenerator fullTable = new FullTableGenerator();
+            table = fullTable.getTable();
+            }
+        
+            //convert to rows.
+            List<Row> rowList = new ArrayList<>();
+            for(int i = 1; i < table.size(); i++) {
+                Row newRow = new Row(table.get(i));
+                rowList.add(newRow);
+            }
+            ObservableList<Row> tableRowList = FXCollections.observableArrayList(rowList);                        
+
+            TableView<Row> tableView =  new TableView<>();
+            LaTeXConverter lc = new LaTeXConverter();
+            for(int i = 0; i < table.get(0).size(); i++) {  
+                final int j = i;
+                TableColumn<Row, String> column = new TableColumn<>();
+                String head = lc.toTex(table.get(0).get(i));
+                System.out.println(head);
+                column.setGraphic(
+				new ImageView(ImageGetter.getTeXImage(head)));
+                column.setCellValueFactory(new Callback<CellDataFeatures<Row, String>, ObservableValue<String>>() {
+                    public ObservableValue<String> call(CellDataFeatures<Row, String> r) {
+                        // r.getValue() returns the Row instance for a particular TableView row
+                        return r.getValue().getDataAt(j);
+                    }
+                });
                 tableView.getColumns().add(column); 
             }
-            //tableView.setItems(tableColumnList);
-           tableArea.setCenter(tableView);
+            tableView.setItems(tableRowList);
+            tableArea.setPadding(new Insets(7,0,0,0));
+            tableArea.setCenter(tableView);
         }
-        
-        
         
 	/**
 	 *	Make the main working area
@@ -853,9 +884,12 @@ public class GUI extends Application {
 		makeToggleButtons();
 		makeLogicButtons();
 		makeExpressionBar();
-		makeTableDisplay();
+
+                centerArea.setVgrow(tableArea, Priority.ALWAYS);
+                centerArea.setPadding(new Insets(10,10,10,10));
 		centerArea.getChildren().addAll(toggleButtonRow, logicButtonRow, expressionRow,tableArea);
-		//add to centerArea
+                
+//add to centerArea
 	}
 	
 	/**
@@ -869,9 +903,9 @@ public class GUI extends Application {
 		primaryStage.getIcons().addAll(new Image("file:src\\resources\\icon.png"), new Image("file:src\\resources\\icon.png")); 
 		makeMenuBar(primaryStage);
 		makeCenterArea();
-		
+                
 		root.setTop(menuBar);
-		root.setCenter(centerArea);	
+		root.setCenter(centerArea);
 		
 		primaryStage.setTitle("Truth Table Generator");
 		Scene scene = new Scene(root, 600, 600);
