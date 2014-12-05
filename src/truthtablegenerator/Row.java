@@ -1,7 +1,9 @@
 package truthtablegenerator;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 /*
@@ -14,20 +16,21 @@ import javafx.beans.property.StringProperty;
  * @author McAllister
  */
 public class Row {
-	private List<StringProperty> data;
+	private List<SimpleStringProperty> dataProperty = new ArrayList<>();
 
 	public Row(List<String> stringData) {
 		setData(stringData);
 	}
 	
 	private void setData(List<String> stringData) {
-		for ( String s : stringData) {
-			StringProperty newData = null;
+	          // System.out.println(stringData);
+            for ( String s : stringData) {
+			SimpleStringProperty newData = new SimpleStringProperty();
 			newData.set(s);
-			data.add(newData);
+			dataProperty.add(newData);
 		}
 	}
 	public StringProperty getDataAt(int index) {
-		return data.get(index);		
-	}
+		return dataProperty.get(index);		
+	} 
 }
