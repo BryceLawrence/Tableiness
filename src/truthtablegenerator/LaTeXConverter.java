@@ -19,12 +19,12 @@ public class LaTeXConverter {
         String converted = null;
         if(!toConvert.equals(null)) {
             converted = toConvert;
-            converted = converted.replaceAll("\\*", "\\land ");
-            converted = converted.replaceAll("\\+", "\\lor ");
-            converted = converted.replaceAll("~", "\\lnot ");
-            converted = converted.replaceAll(">", "\\rightarrow ");
-            converted = converted.replaceAll("<", "\\leftrightarrow ");
-            converted = converted.replaceAll("#", "\\oplus ");            
+            converted = converted.replaceAll("\\*", "\\\\land ");
+            converted = converted.replaceAll("\\+", "\\\\lor ");
+            converted = converted.replaceAll("~", "\\\\lnot ");
+            converted = converted.replaceAll(">", "\\\\rightarrow ");
+            converted = converted.replaceAll("<", "\\\\leftrightarrow ");
+            converted = converted.replaceAll("#", "\\\\oplus ");            
         }
             
         return converted;
