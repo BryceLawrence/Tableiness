@@ -818,7 +818,7 @@ public class GUI extends Application {
 				caretLocation = expression.getCaretPosition();
 			}
 		});
-		     
+		expressionRow.setSpacing(7);
                 expressionRow.setHgrow(expression, Priority.ALWAYS);
 
 		
