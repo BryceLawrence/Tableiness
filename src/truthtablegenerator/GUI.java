@@ -125,7 +125,7 @@ public class GUI extends Application {
 		
 		BorderPane pane = new BorderPane();
 		FileIO f = new FileIO();
-		TextArea text = new TextArea(f.loadHelpContents("Rules"));
+		TextArea text = new TextArea(f.loadHelpContents("Terms"));
 		//text.setText(f.loadHelpContents());
 		
 		text.setEditable(false);
@@ -336,12 +336,12 @@ public class GUI extends Application {
 		MenuItem compact = new MenuItem("Compact View");
 		MenuItem full = new MenuItem("Full View");
 		MenuItem batch = new MenuItem("Batch Mode");
-		MenuItem dynamic = new MenuItem("Dynamic Mode");
+		MenuItem dynamic = new MenuItem("Dynamic Mode");/*
 		MenuItem instant = new MenuItem("Instant Display");
 		MenuItem step = new MenuItem("Step Display");
+		*/
 		
-		
-		modeMenu.getItems().addAll(compact, full, batch, dynamic, instant, step);
+		modeMenu.getItems().addAll(compact, full, batch, dynamic/*, instant, step*/);
 		
 		//START MODE EVENT HANDLING
 		
@@ -383,7 +383,7 @@ public class GUI extends Application {
 				displayResponseSpeedButton.setGraphic(
 				new ImageView(ImageGetter.getTeXImage("Batch \\rightarrow Dynamic")));
 			}
-		});
+		});/*
 		step.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
@@ -399,7 +399,7 @@ public class GUI extends Application {
 				displaySpeedButton.setGraphic(
 				new ImageView(ImageGetter.getTeXImage("Instant \\leftarrow Step")));
 			}
-		});
+		});*/
 		
 		//	START Keyboard Accelerators
 		
@@ -459,7 +459,7 @@ public class GUI extends Application {
 		displayResponseSpeedButton.setGraphic(
 				new ImageView(ImageGetter.getTeXImage("Batch \\leftarrow Dynamic")));
 		
-		toggleButtonRow.getChildren().addAll(displayResponseSpeedButton, modeButton, displaySpeedButton);
+		toggleButtonRow.getChildren().addAll(displayResponseSpeedButton, modeButton/*, displaySpeedButton*/);
 		displayResponseSpeedButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
@@ -497,7 +497,7 @@ public class GUI extends Application {
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
 			}
-		});
+		});/*
 		displaySpeedButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
@@ -514,7 +514,7 @@ public class GUI extends Application {
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
 			}
-		});
+		});*/
                 toggleButtonRow.setSpacing(14);
                 toggleButtonRow.setPadding(new Insets(0,0,7,0));
 	}
@@ -819,7 +819,7 @@ public class GUI extends Application {
 			}
 		});
 		     
-                expressionRow.setHgrow(expression, Priority.ALWAYS);
+		expressionRow.setHgrow(expression, Priority.ALWAYS);
 
 		
 		submit.setOnAction(new EventHandler<ActionEvent>() {
@@ -830,64 +830,63 @@ public class GUI extends Application {
 		});
 	}
 
-        /**
-	 * Displays the created table for the submitted expression
-	 */
-        private void makeTableDisplay() {
-            List<List<String>> table = null;
-            
-            //switch to handle the selected mode
-            if (outputMode.equals("Compact")) {
-            CompactTableGenerator compTable = new CompactTableGenerator();
-            table = compTable.getTable();
-            }
-
-            else {
-            FullTableGenerator fullTable = new FullTableGenerator();
-            table = fullTable.getTable();
-            }
-        
-            //convert to rows.
-            List<Row> rowList = new ArrayList<>();
-            for(int i = 1; i < table.size(); i++) {
-                Row newRow = new Row(table.get(i));
-                rowList.add(newRow);
-            }
-            ObservableList<Row> tableRowList = FXCollections.observableArrayList(rowList);                        
-
-            TableView<Row> tableView =  new TableView<>();
-            LaTeXConverter lc = new LaTeXConverter();
-            for(int i = 0; i < table.get(0).size(); i++) {  
-                final int j = i;
-                TableColumn<Row, String> column = new TableColumn<>();
-                String head = lc.toTex(table.get(0).get(i));
-                System.out.println(head);
-                column.setGraphic(
-				new ImageView(ImageGetter.getTeXImage(head)));
-                column.setCellValueFactory(new Callback<CellDataFeatures<Row, String>, ObservableValue<String>>() {
-                    public ObservableValue<String> call(CellDataFeatures<Row, String> r) {
-                        // r.getValue() returns the Row instance for a particular TableView row
-                        return r.getValue().getDataAt(j);
-                    }
-                });
-                tableView.getColumns().add(column); 
-            }
-            tableView.setItems(tableRowList);
-            tableArea.setPadding(new Insets(7,0,0,0));
-            tableArea.setCenter(tableView);
-        }
-        
 	/**
-	 *	Make the main working area
-	 */
-	private void makeCenterArea() {
-		makeToggleButtons();
-		makeLogicButtons();
-		makeExpressionBar();
+	* Displays the created table for the submitted expression
+	*/
+	private void makeTableDisplay() {
+		List<List<String>> table = null;
 
-                centerArea.setVgrow(tableArea, Priority.ALWAYS);
-                centerArea.setPadding(new Insets(10,10,10,10));
-		centerArea.getChildren().addAll(toggleButtonRow, logicButtonRow, expressionRow,tableArea);
+		//switch to handle the selected mode
+		if (outputMode.equals("Compact")) {
+			CompactTableGenerator compTable = new CompactTableGenerator();
+			table = compTable.getTable();
+		}
+
+		else {
+			FullTableGenerator fullTable = new FullTableGenerator();
+			table = fullTable.getTable();
+		}
+
+		//convert to rows.
+		List<Row> rowList = new ArrayList<>();
+		for(int i = 1; i < table.size(); i++) {
+				Row newRow = new Row(table.get(i));
+				rowList.add(newRow);
+		}
+		ObservableList<Row> tableRowList = FXCollections.observableArrayList(rowList);                        
+
+		TableView<Row> tableView =  new TableView<>();
+		LaTeXConverter lc = new LaTeXConverter();
+		for(int i = 0; i < table.get(0).size(); i++) {  
+			final int j = i;
+			TableColumn<Row, String> column = new TableColumn<>();
+			String head = lc.toTex(table.get(0).get(i));
+			System.out.println(head);
+			column.setGraphic(
+				new ImageView(ImageGetter.getTeXImage(head)));
+			column.setCellValueFactory(new Callback<CellDataFeatures<Row, String>, ObservableValue<String>>() {
+				public ObservableValue<String> call(CellDataFeatures<Row, String> r) {
+					// r.getValue() returns the Row instance for a particular TableView row
+					return r.getValue().getDataAt(j);
+				}});
+
+			tableView.getColumns().add(column); 
+		}
+		tableView.setItems(tableRowList);
+		tableArea.setPadding(new Insets(7,0,0,0));
+		tableArea.setCenter(tableView);
+	}
+
+/**
+ *	Make the main working area
+ */
+private void makeCenterArea() {
+	makeToggleButtons();
+	makeLogicButtons();
+	makeExpressionBar();
+	centerArea.setVgrow(tableArea, Priority.ALWAYS);
+	centerArea.setPadding(new Insets(10,10,10,10));
+	centerArea.getChildren().addAll(toggleButtonRow, logicButtonRow, expressionRow,tableArea);
                 
 //add to centerArea
 	}
