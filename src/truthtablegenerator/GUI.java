@@ -869,7 +869,10 @@ public class GUI extends Application {
 					// r.getValue() returns the Row instance for a particular TableView row
 					return r.getValue().getDataAt(j);
 				}});
-
+                        
+                        // keeps columns from being sorted
+                        column.setSortable(false);
+                        
 			tableView.getColumns().add(column); 
 		}
 		tableView.setItems(tableRowList);
@@ -899,7 +902,12 @@ private void makeCenterArea() {
 	public void start(Stage primaryStage) {
 		caretLocation = 0;
 		
-		primaryStage.getIcons().addAll(new Image("file:src\\resources\\icon.png"), new Image("file:src\\resources\\icon.png")); 
+		primaryStage.getIcons().addAll(new Image("file:src\\resources\\icon.png"), new Image("file:src\\resources\\icon.png"));
+                
+                //Locks window to a minimum size
+                primaryStage.setMinWidth(620);
+                primaryStage.setMinHeight(640);
+                
 		makeMenuBar(primaryStage);
 		makeCenterArea();
                 
