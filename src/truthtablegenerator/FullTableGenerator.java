@@ -30,9 +30,6 @@ public class FullTableGenerator {
 		for (int i = 0; i < fullTable.get(0).size(); i ++) {
 			displayOrder.add(i);
 		}
-		for (List<String> row : fullTable) {
-			System.out.println(row);
-		}
 	}
 	
 	/**
