@@ -899,7 +899,9 @@ private void makeCenterArea() {
 	public void start(Stage primaryStage) {
 		caretLocation = 0;
 		
-		primaryStage.getIcons().addAll(new Image("file:src\\resources\\icon.png"), new Image("file:src\\resources\\icon.png")); 
+		primaryStage.getIcons().addAll(new Image("file:src\\resources\\icon.png"), new Image("file:src\\resources\\icon.png"));
+                primaryStage.setMinWidth(620);
+                primaryStage.setMinHeight(640);
 		makeMenuBar(primaryStage);
 		makeCenterArea();
                 
