@@ -33,6 +33,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooserBuilder;
 import javafx.stage.Modality;
@@ -122,47 +124,74 @@ public class GUI extends Application {
 		
 		helpButtonsRow.getChildren().addAll(terms, rules, hints, laws, lawsConditional, close);
 		
-		
+		// Stuff to turn help into HTML view
+                
+                WebView termsWeb = new WebView();
+                WebEngine termsEngine = termsWeb.getEngine();
+                termsEngine.load("file:///C:/Users/Bryce/Documents/NetbeansProjects/TruthTableGenerator/src/resources/Terms.html");
+                
+                WebView rulesWeb = new WebView();
+                WebEngine rulesEngine = rulesWeb.getEngine();
+                rulesEngine.load("file:///C:/Users/Bryce/Documents/NetbeansProjects/TruthTableGenerator/src/resources/Rules.html");
+                
+                WebView hintsWeb = new WebView();
+                WebEngine hintsEngine = hintsWeb.getEngine();
+                hintsEngine.load("file:///C:/Users/Bryce/Documents/NetbeansProjects/TruthTableGenerator/src/resources/Hints.html");
+                
+                WebView laws1Web = new WebView();
+                WebEngine laws1Engine = laws1Web.getEngine();
+                laws1Engine.load("file:///C:/Users/Bryce/Documents/NetbeansProjects/TruthTableGenerator/src/resources/LogicalEquivalences1.html");
+                
+                WebView laws2Web = new WebView();
+                WebEngine laws2Engine = laws2Web.getEngine();
+                laws2Engine.load("file:///C:/Users/Bryce/Documents/NetbeansProjects/TruthTableGenerator/src/resources/LogicalEquivalences2.html");
+                
 		BorderPane pane = new BorderPane();
-		FileIO f = new FileIO();
-		TextArea text = new TextArea(f.loadHelpContents("Terms"));
+		//FileIO f = new FileIO();
+		//TextArea text = new TextArea(f.loadHelpContents("Terms"));
 		//text.setText(f.loadHelpContents());
 		
-		text.setEditable(false);
-		text.setWrapText(true);
+		//text.setEditable(false);
+		//text.setWrapText(true);
 		
 		pane.setTop(helpButtonsRow);
-		pane.setCenter(text);
-		
+		//pane.setCenter(text);
+		pane.setCenter(termsWeb);
+                
 		terms.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				text.setText(f.loadHelpContents("Terms"));
-				}
+                            //text.setText(f.loadHelpContents("Terms"));
+                            pane.setCenter(termsWeb);
+                        }
 		});
 		rules.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				text.setText(f.loadHelpContents("Rules"));
-				}
+                            //text.setText(f.loadHelpContents("Rules"));
+                            pane.setCenter(rulesWeb);
+                        }
 		});
 		hints.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				text.setText(f.loadHelpContents("Hints"));
-				}
+                            //text.setText(f.loadHelpContents("Hints"));
+                            pane.setCenter(hintsWeb);
+			}
 		});
 		laws.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				text.setText(f.loadHelpContents("Laws"));
-				}
+                            //text.setText(f.loadHelpContents("Laws"));
+                            pane.setCenter(laws1Web);
+			}
 		});
 		lawsConditional.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
-				text.setText(f.loadHelpContents("LawsConditional"));
-				}
+                            //text.setText(f.loadHelpContents("LawsConditional"));
+                            pane.setCenter(laws2Web);   
+			}
 		});
 		close.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
@@ -172,6 +201,8 @@ public class GUI extends Application {
 		});
 		
 		stage.setTitle("Help");
+                stage.setMinWidth(620);
+                stage.setMinHeight(640);
 		stage.setScene(new Scene(pane, 600, 600));
 		stage.show();
 		
