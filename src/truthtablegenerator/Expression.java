@@ -432,26 +432,14 @@ public class Expression {
 	 * @return the list of ParentheticalSteps in Order of Operations
 	 */
 	public static List<String> calculateLogicalSteps(List<String> parentheticalSteps) {
-		//System.out.println("LOGICAL STEPS");
 		List<String> steps = new ArrayList<>();
 		for (int i = 0; i < parentheticalSteps.size(); i++) {
 		//	calculate the ParentheticalSteps for this STEP 
-//System.out.println("	STEP " +( i + 1));
 			List <String> notSteps = calculateNotSteps(parentheticalSteps.get(i));
-//System.out.println("	NOT STEPS");
-//System.out.println(notSteps);
 			List <String> andSteps = calculateBinarySteps(parentheticalSteps.get(i), '*');
-//System.out.println("	AND STEPS");
-//System.out.println(andSteps);
 			List <String> orSteps = calculateBinarySteps(parentheticalSteps.get(i), '+');
-//System.out.println("	OR STEPS");
-//System.out.println(orSteps);
 			List <String> impliesSteps = calculateBinarySteps(parentheticalSteps.get(i), '>');
-//System.out.println("	IMPLY STEPS");
-//System.out.println(impliesSteps);
 			List <String> iffSteps = calculateBinarySteps(parentheticalSteps.get(i), '<');
-//System.out.println("	IFF STEPS");
-//System.out.println(iffSteps);
 			
 			//add the ParentheticalSteps calculated in order of operations, then move i forward the muber of ParentheticalSteps added
 			steps.addAll(notSteps);
@@ -469,22 +457,14 @@ public class Expression {
 	public static void setFullExpression() {
 		//find all variables
 		List <String> variables = calculateVariables();
-//System.out.println("	VARIABLES");
-//System.out.println(variables);
 		variableList.addAll(variables);
 		List<String> parentheticalSteps = calculateParenthesesSteps(1);
-//System.out.println("	PARENTHETICAL STEPS");
-//System.out.println(parentheticalSteps);
 		List<String> logicalSteps = calculateLogicalSteps(parentheticalSteps);
-//System.out.println("	ALL STEPS");
-//System.out.println(logicalSteps);
 		steps.addAll(logicalSteps);
 		
 		fullExpression.addAll(variableList);
 		fullExpression.addAll(steps);
 		variableCount = variables.size();
-//System.out.println("	FULL EXPRESSION");
-//System.out.println(fullExpression);
 	}
 
 	/**

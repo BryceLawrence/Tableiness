@@ -50,15 +50,6 @@ public class CompactTableGenerator {
 		if (displayOrder.size() == 0) { 
 			displayOrder.add(0); 
 		}
-		System.out.println(displayOrder);
-		System.out.print('[');
-		for (int i = 0; i < compactTableString.length(); i ++) {
-			System.out.print(i + ", ");
-		}
-		System.out.println();
-		for (List<String> row : compactTable) {
-			System.out.println(row);
-		}
 	}
 	
 	/**

@@ -60,8 +60,7 @@ public class GUI extends Application {
 			private HBox logicButtonRow = new HBox();
 			private HBox expressionRow = new HBox();
 				private TextField expression = new TextField();
-			//private VBox tableArea = new VBox();
-                        private BorderPane tableArea = new BorderPane();
+					private BorderPane tableArea = new BorderPane();
 	
 	// output mode variables
 	private String outputDisplaySpeed = new String("Instant");
@@ -214,18 +213,7 @@ public class GUI extends Application {
 						FileIO f = new FileIO();
 						expression.setText(f.loadExpression(file.toString()));
 						Expression.setEnteredExpression(expression.getText());
-						try {
-							if (Expression.validate()) {
-								FullTableGenerator t = new FullTableGenerator();
-								t.getTable();
-							}
-						} catch (ValidationException ex) {
-							// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
-							// update then dont show errors. Also the error "Same" is not an error, more of a dont waste time updating, so 
-							// dont display it either
-							createErrorBox("Expression Loaded had this error:\n" + ex.getMessage());
-							System.out.println(ex.getMessage());
-						}
+						submitExpression(true);
 					}
 				}
 			}
@@ -268,13 +256,11 @@ public class GUI extends Application {
                                             f.saveLaTeXTable(file.toString(), ct.getTable(), ft.getTable());
                                         } catch (ValidationException e) {
                                             createErrorBox("Cannot Save Table for Invalid Expression");
-                                            System.out.println("Cannot Save Table for Invalid Expression");
                                         }
                                         
                                         
                                     } else {
                                         createErrorBox("Cannont Save Table for Empty Expression");
-					System.out.println("Cannot Save Table for Empty Expression");
                                     }
 
                                 }     
@@ -336,12 +322,9 @@ public class GUI extends Application {
 		MenuItem compact = new MenuItem("Compact View");
 		MenuItem full = new MenuItem("Full View");
 		MenuItem batch = new MenuItem("Batch Mode");
-		MenuItem dynamic = new MenuItem("Dynamic Mode");/*
-		MenuItem instant = new MenuItem("Instant Display");
-		MenuItem step = new MenuItem("Step Display");
-		*/
+		MenuItem dynamic = new MenuItem("Dynamic Mode");
 		
-		modeMenu.getItems().addAll(compact, full, batch, dynamic/*, instant, step*/);
+		modeMenu.getItems().addAll(compact, full, batch, dynamic);
 		
 		//START MODE EVENT HANDLING
 		
@@ -382,24 +365,9 @@ public class GUI extends Application {
 				outputResponseSpeed = "Dynamic";
 				displayResponseSpeedButton.setGraphic(
 				new ImageView(ImageGetter.getTeXImage("Batch \\rightarrow Dynamic")));
-			}
-		});/*
-		step.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent t) {
-				outputDisplaySpeed = "Step";
-				displaySpeedButton.setGraphic(
-				new ImageView(ImageGetter.getTeXImage("Instant \\rightarrow Step")));
+				submitExpression(false);
 			}
 		});
-		instant.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent t) {
-				outputDisplaySpeed = "Instant";
-				displaySpeedButton.setGraphic(
-				new ImageView(ImageGetter.getTeXImage("Instant \\leftarrow Step")));
-			}
-		});*/
 		
 		//	START Keyboard Accelerators
 		
@@ -459,7 +427,7 @@ public class GUI extends Application {
 		displayResponseSpeedButton.setGraphic(
 				new ImageView(ImageGetter.getTeXImage("Batch \\leftarrow Dynamic")));
 		
-		toggleButtonRow.getChildren().addAll(displayResponseSpeedButton, modeButton/*, displaySpeedButton*/);
+		toggleButtonRow.getChildren().addAll(displayResponseSpeedButton, modeButton);
 		displayResponseSpeedButton.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
@@ -467,6 +435,7 @@ public class GUI extends Application {
 					outputResponseSpeed = "Dynamic";
 					displayResponseSpeedButton.setGraphic(
 							new ImageView(ImageGetter.getTeXImage("Batch \\rightarrow Dynamic")));
+					submitExpression(false);
 				} else {
 					outputResponseSpeed = "Batch";
 					displayResponseSpeedButton.setGraphic(
@@ -497,29 +466,12 @@ public class GUI extends Application {
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
 			}
-		});/*
-		displaySpeedButton.setOnAction(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent e) {
-				if(outputDisplaySpeed.equals("Instant")) {
-					outputDisplaySpeed = "Step";
-					displaySpeedButton.setGraphic(
-							new ImageView(ImageGetter.getTeXImage("Instant \\rightarrow Step")));
-				} else {
-					outputDisplaySpeed = "Instant";
-					displaySpeedButton.setGraphic(
-							new ImageView(ImageGetter.getTeXImage("Instant \\leftarrow Step")));
-				}		
-				expression.requestFocus();
-				expression.deselect(); 
-				expression.positionCaret(caretLocation);
-			}
-		});*/
+		});
                 toggleButtonRow.setSpacing(14);
                 toggleButtonRow.setPadding(new Insets(0,0,7,0));
 	}
 	
-        /**
+	/**
 	 * Make the logic buttons
 	 */
 	private void makeLogicButtons() {
@@ -785,7 +737,6 @@ public class GUI extends Application {
 				// dont display it either
 				if (showErrors && !ex.getMessage().equals("Same")) { 
 					createErrorBox(ex.getMessage());
-					System.out.println(ex.getMessage());
 				}
 			}
 
@@ -861,7 +812,6 @@ public class GUI extends Application {
 			final int j = i;
 			TableColumn<Row, String> column = new TableColumn<>();
 			String head = lc.toTex(table.get(0).get(i));
-			System.out.println(head);
 			column.setGraphic(
 				new ImageView(ImageGetter.getTeXImage(head)));
 			column.setCellValueFactory(new Callback<CellDataFeatures<Row, String>, ObservableValue<String>>() {
