@@ -718,25 +718,21 @@ public class GUI extends Application {
 	 */
 	private void submitExpression(boolean showErrors) {
 		Expression.setEnteredExpression(expression.getText());
-
-			try {
-				if (Expression.validate()) {
-					/*if (outputMode.equals("Full")) {
-						FullTableGenerator t = new FullTableGenerator();
-						t.getTable();
-					} else {
-						CompactTableGenerator t = new CompactTableGenerator();
-						t.getTable();
-					}*/
-                                    //need to clear table display first.
-                                    makeTableDisplay();
-				}
-			} catch (ValidationException ex) {
-				// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
-				// update then dont show errors. Also the error "Same" is not an error, more of a dont waste time updating, so 
-				// dont display it either
-				if (showErrors && !ex.getMessage().equals("Same")) { 
-					createErrorBox(ex.getMessage());
+			if (expression.getText().equals("")) {
+				makeTableDisplay();
+			}
+			else {
+				try {
+					if (Expression.validate()) {
+						makeTableDisplay();
+					}
+				} catch (ValidationException ex) {
+					// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
+					// update then dont show errors. Also the error "Same" is not an error, more of a dont waste time updating, so 
+					// dont display it either
+					if (showErrors && !ex.getMessage().equals("Same")) { 
+						createErrorBox(ex.getMessage());
+					}
 				}
 			}
 
@@ -786,47 +782,49 @@ public class GUI extends Application {
 	*/
 	private void makeTableDisplay() {
 		List<List<String>> table = null;
-
-		//switch to handle the selected mode
-		if (outputMode.equals("Compact")) {
-			CompactTableGenerator compTable = new CompactTableGenerator();
-			table = compTable.getTable();
-		}
-
-		else {
-			FullTableGenerator fullTable = new FullTableGenerator();
-			table = fullTable.getTable();
-		}
-
-		//convert to rows.
-		List<Row> rowList = new ArrayList<>();
-		for(int i = 1; i < table.size(); i++) {
-				Row newRow = new Row(table.get(i));
-				rowList.add(newRow);
-		}
-		ObservableList<Row> tableRowList = FXCollections.observableArrayList(rowList);                        
-
 		TableView<Row> tableView =  new TableView<>();
-		LaTeXConverter lc = new LaTeXConverter();
-		for(int i = 0; i < table.get(0).size(); i++) {  
-			final int j = i;
-			TableColumn<Row, String> column = new TableColumn<>();
-			String head = lc.toTex(table.get(0).get(i));
-			column.setGraphic(
-				new ImageView(ImageGetter.getTeXImage(head)));
-			column.setCellValueFactory(new Callback<CellDataFeatures<Row, String>, ObservableValue<String>>() {
-				public ObservableValue<String> call(CellDataFeatures<Row, String> r) {
-					// r.getValue() returns the Row instance for a particular TableView row
-					return r.getValue().getDataAt(j);
-				}});
-                        
-                        // keeps columns from being sorted
-                        column.setSortable(false);
-                        
-			tableView.getColumns().add(column); 
+		
+		if (!expression.getText().equals("")) {
+			//switch to handle the selected mode
+			if (outputMode.equals("Compact")) {
+				CompactTableGenerator compTable = new CompactTableGenerator();
+				table = compTable.getTable();
+			}
+			else {
+				FullTableGenerator fullTable = new FullTableGenerator();
+				table = fullTable.getTable();
+			}
+			//convert to rows.
+			List<Row> rowList = new ArrayList<>();
+			for(int i = 1; i < table.size(); i++) {
+					Row newRow = new Row(table.get(i));
+					rowList.add(newRow);
+			}
+			ObservableList<Row> tableRowList = FXCollections.observableArrayList(rowList);                        
+
+			LaTeXConverter lc = new LaTeXConverter();
+			for(int i = 0; i < table.get(0).size(); i++) {  
+				final int j = i;
+				TableColumn<Row, String> column = new TableColumn<>();
+				String head = lc.toTex(table.get(0).get(i));
+				if (! expression.getText().equals("")) {
+				column.setGraphic(
+					new ImageView(ImageGetter.getTeXImage(head)));
+				}
+				column.setCellValueFactory(new Callback<CellDataFeatures<Row, String>, ObservableValue<String>>() {
+					public ObservableValue<String> call(CellDataFeatures<Row, String> r) {
+						// r.getValue() returns the Row instance for a particular TableView row
+						return r.getValue().getDataAt(j);
+					}});
+
+				// keeps columns from being sorted
+				column.setSortable(false);
+
+				tableView.getColumns().add(column); 
+			}
+			tableView.setItems(tableRowList);
+			tableArea.setPadding(new Insets(7,0,0,0));
 		}
-		tableView.setItems(tableRowList);
-		tableArea.setPadding(new Insets(7,0,0,0));
 		tableArea.setCenter(tableView);
 	}
 
@@ -839,7 +837,8 @@ private void makeCenterArea() {
 	makeExpressionBar();
 	centerArea.setVgrow(tableArea, Priority.ALWAYS);
 	centerArea.setPadding(new Insets(10,10,10,10));
-	centerArea.getChildren().addAll(toggleButtonRow, logicButtonRow, expressionRow,tableArea);
+	makeTableDisplay();
+	centerArea.getChildren().addAll(toggleButtonRow, logicButtonRow, expressionRow, tableArea);
                 
 //add to centerArea
 	}
