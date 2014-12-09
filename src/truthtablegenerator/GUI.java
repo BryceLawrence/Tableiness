@@ -17,7 +17,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableView;
@@ -865,23 +864,11 @@ public class GUI extends Application {
 			System.out.println(head);
 			column.setGraphic(
 				new ImageView(ImageGetter.getTeXImage(head)));
-			
-			column.setCellFactory(new Callback<TableColumn<Row, String>, TableCell<Row, String>>() {
-				@Override
-				public TableCell<Row, String> call(TableColumn<Row, String> param) {
-					TableCell<Row, String> tc = new TableCell<>();
-					tc.setAlignment(Pos.CENTER);
-					return tc;
-				}
-			});
-			
 			column.setCellValueFactory(new Callback<CellDataFeatures<Row, String>, ObservableValue<String>>() {
-				@Override
 				public ObservableValue<String> call(CellDataFeatures<Row, String> r) {
 					// r.getValue() returns the Row instance for a particular TableView row
 					return r.getValue().getDataAt(j);
-				}
-			});
+				}});
 
 			tableView.getColumns().add(column); 
 		}
