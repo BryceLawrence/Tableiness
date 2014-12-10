@@ -125,7 +125,7 @@ public class GUI extends Application {
 
         helpButtonsRow.getChildren().addAll(terms, rules, hints, laws, lawsConditional, close);
 
-		// Stuff to turn help into HTML view
+        // Stuff to turn help into HTML view
         WebView termsWeb = new WebView();
         WebEngine termsEngine = termsWeb.getEngine();
         termsEngine.load("file:///C:\\Users/Tyler/Documents/School/BYUI Round 3/Fall 2014/CS 246/Tableiness/TruthTableGenerator/src/resources/terms.html");
@@ -151,7 +151,7 @@ public class GUI extends Application {
         //TextArea text = new TextArea(f.loadHelpContents("Terms"));
         //text.setText(f.loadHelpContents());
 
-		//text.setEditable(false);
+        //text.setEditable(false);
         //text.setWrapText(true);
         pane.setTop(helpButtonsRow);
         //pane.setCenter(text);
@@ -223,7 +223,7 @@ public class GUI extends Application {
 
         fileMenu.getItems().addAll(load, saveExpression, saveTable, reset, exit);
 
-		//START FILE EVENT HANDLING
+        //START FILE EVENT HANDLING
         load.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -302,7 +302,7 @@ public class GUI extends Application {
             public void handle(ActionEvent t) {
                 expression.setText("");
 
-				//some table updater
+                //some table updater
                 outputResponseSpeed = "Batch";
                 displayResponseSpeedButton.setGraphic(
                         new ImageView(ImageGetter.getTeXImage("Batch \\leftarrow Dynamic")));
@@ -326,7 +326,7 @@ public class GUI extends Application {
             }
         });
 
-		//	START Keyboard Accelerators
+        //	START Keyboard Accelerators
         //CTRL ALT L
         load.setAccelerator(new KeyCodeCombination(
                 KeyCode.L, KeyCombination.ALT_DOWN, KeyCombination.CONTROL_DOWN));
@@ -356,7 +356,7 @@ public class GUI extends Application {
 
         modeMenu.getItems().addAll(compact, full, batch, dynamic);
 
-		//START MODE EVENT HANDLING
+        //START MODE EVENT HANDLING
         compact.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -394,7 +394,7 @@ public class GUI extends Application {
             }
         });
 
-		//	START Keyboard Accelerators
+        //	START Keyboard Accelerators
         //CTRL ALT C
         compact.setAccelerator(new KeyCodeCombination(
                 KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.CONTROL_DOWN));
@@ -421,7 +421,7 @@ public class GUI extends Application {
 
         helpMenu.getItems().add(help);
 
-		//START HELP EVENT HANDLING
+        //START HELP EVENT HANDLING
         help.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
@@ -751,7 +751,7 @@ public class GUI extends Application {
                     makeTableDisplay();
                 }
             } catch (ValidationException ex) {
-					// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
+                // if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
                 // update then dont show errors. Also the error "Same" is not an error, more of a dont waste time updating, so 
                 // dont display it either
                 if (showErrors && !ex.getMessage().equals("Same")) {
