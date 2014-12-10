@@ -814,7 +814,7 @@ public class GUI extends Application {
 	private void makeTableDisplay() {
 		List<List<String>> table = null;
 		TableView<Row> tableView =  new TableView<>();
-		
+		tableView.setId("table");
 		if (!expression.getText().equals("")) {
 			//switch to handle the selected mode
 			if (outputMode.equals("Compact")) {
@@ -842,6 +842,7 @@ public class GUI extends Application {
 				column.setGraphic(
 					new ImageView(ImageGetter.getTeXImage(head)));
 				}
+				
 				column.setCellValueFactory(new Callback<CellDataFeatures<Row, String>, ObservableValue<String>>() {
 					public ObservableValue<String> call(CellDataFeatures<Row, String> r) {
 						// r.getValue() returns the Row instance for a particular TableView row
@@ -893,10 +894,11 @@ private void makeCenterArea() {
                 
 		root.setTop(menuBar);
 		root.setCenter(centerArea);
-		
+	
 		primaryStage.setTitle("Truth Table Generator");
 		Scene scene = new Scene(root, 600, 600);
 		
+		scene.getStylesheets().add("/truthtablegenerator/newstyle.css");
 		scene.getAccelerators().put(
 			new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_ANY), 
 			new Runnable() {
