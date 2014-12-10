@@ -85,7 +85,7 @@ public class GUI extends Application {
 		pane.setBottom(b);
 		
 		Stage stage = new Stage();
-		stage.getIcons().add(new Image("file:src\\resources\\errorIcon.png"));
+		stage.getIcons().add(new Image(this.getClass().getResource("/resources/errorIcon.png").toString()));
 		b.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
@@ -111,7 +111,7 @@ public class GUI extends Application {
 	
 	public void createHelpWindow() {
 		Stage stage = new Stage();
-		stage.getIcons().add(new Image("file:src\\resources\\iconSmall.png"));
+		stage.getIcons().add(new Image(this.getClass().getResource("/resources/icon.png").toString()));
 		
 		Button terms  = new Button("Terms");
 		Button rules  = new Button("Rules");
@@ -127,23 +127,23 @@ public class GUI extends Application {
                 
                 WebView termsWeb = new WebView();
                 WebEngine termsEngine = termsWeb.getEngine();
-                termsEngine.load("file:///C:\\Users/McAllister/Desktop/School/Java/TruthTableGenerator/src/resources/terms.html");
+                termsEngine.load(this.getClass().getResource("/resources/Terms.html").toString());
                 
                 WebView rulesWeb = new WebView();
                 WebEngine rulesEngine = rulesWeb.getEngine();
-                rulesEngine.load("file:///C:\\Users/McAllister/Desktop/School/Java/TruthTableGenerator/src/resources/rules.html");
+                rulesEngine.load(this.getClass().getResource("/resources/Rules.html").toString());
                 
                 WebView hintsWeb = new WebView();
                 WebEngine hintsEngine = hintsWeb.getEngine();
-                hintsEngine.load("file:///C:\\Users/McAllister/Desktop/School/Java/TruthTableGenerator/src/resources/hints.html");
+                hintsEngine.load(this.getClass().getResource("/resources/Hints.html").toString());
                 
                 WebView laws1Web = new WebView();
                 WebEngine laws1Engine = laws1Web.getEngine();
-                laws1Engine.load("file:///C:\\Users/McAllister/Desktop/School/Java/TruthTableGenerator/src/resources/LogicalEquivalences1.html");
+                laws1Engine.load(this.getClass().getResource("/resources/LogicalEquivalences1.html").toString());
                 
                 WebView laws2Web = new WebView();
                 WebEngine laws2Engine = laws2Web.getEngine();
-                laws2Engine.load("file:///C:\\Users/McAllister/Desktop/School/Java/TruthTableGenerator/src/resources/LogicalEquivalences2.html");
+                laws2Engine.load(this.getClass().getResource("/resources/LogicalEquivalences2.html").toString());
                 
 		BorderPane pane = new BorderPane();
 		//FileIO f = new FileIO();
@@ -878,7 +878,7 @@ private void makeCenterArea() {
 	public void start(Stage primaryStage) {
 		caretLocation = 0;
 		
-		primaryStage.getIcons().addAll(new Image("file:src\\resources\\icon.png"), new Image("file:src\\resources\\icon.png"));
+		primaryStage.getIcons().add(new Image(this.getClass().getResource("/resources/icon.png").toString()));
                 
                 //Locks window to a minimum size
                 primaryStage.setMinWidth(620);
@@ -886,14 +886,14 @@ private void makeCenterArea() {
                 
 		makeMenuBar(primaryStage);
 		makeCenterArea();
-                
+               // System.out.println(this.getClass().getResource("/resources/icon.png").toString());
 		root.setTop(menuBar);
 		root.setCenter(centerArea);
 	
 		primaryStage.setTitle("Truth Table Generator");
 		Scene scene = new Scene(root, 600, 600);
 		
-		scene.getStylesheets().add("/truthtablegenerator/newstyle.css");
+		scene.getStylesheets().add(this.getClass().getResource("/truthtablegenerator/newstyle.css").toString());
 		scene.getAccelerators().put(
 			new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_ANY), 
 			new Runnable() {
