@@ -41,6 +41,7 @@ public class Expression {
 			workableExpression = enteredExpression.toLowerCase();
 			workableExpression = workableExpression.replaceAll("true", "1");
 			workableExpression = workableExpression.replaceAll("false", "0");
+			workableExpression = workableExpression.replaceAll("<-->","<");
 			workableExpression = workableExpression.replaceAll("-->",">");
 			workableExpression = workableExpression.replaceAll("implies",">");
 			workableExpression = workableExpression.replaceAll("imply",">");

@@ -127,23 +127,23 @@ public class GUI extends Application {
                 
                 WebView termsWeb = new WebView();
                 WebEngine termsEngine = termsWeb.getEngine();
-                termsEngine.load("file:///C:/Users/Bryce/Documents/NetbeansProjects/TruthTableGenerator/src/resources/Terms.html");
+                termsEngine.load("file:///C:\\Users/McAllister/Desktop/School/Java/TruthTableGenerator/src/resources/terms.html");
                 
                 WebView rulesWeb = new WebView();
                 WebEngine rulesEngine = rulesWeb.getEngine();
-                rulesEngine.load("file:///C:/Users/Bryce/Documents/NetbeansProjects/TruthTableGenerator/src/resources/Rules.html");
+                rulesEngine.load("file:///C:\\Users/McAllister/Desktop/School/Java/TruthTableGenerator/src/resources/rules.html");
                 
                 WebView hintsWeb = new WebView();
                 WebEngine hintsEngine = hintsWeb.getEngine();
-                hintsEngine.load("file:///C:/Users/Bryce/Documents/NetbeansProjects/TruthTableGenerator/src/resources/Hints.html");
+                hintsEngine.load("file:///C:\\Users/McAllister/Desktop/School/Java/TruthTableGenerator/src/resources/hints.html");
                 
                 WebView laws1Web = new WebView();
                 WebEngine laws1Engine = laws1Web.getEngine();
-                laws1Engine.load("file:///C:/Users/Bryce/Documents/NetbeansProjects/TruthTableGenerator/src/resources/LogicalEquivalences1.html");
+                laws1Engine.load("file:///C:\\Users/McAllister/Desktop/School/Java/TruthTableGenerator/src/resources/LogicalEquivalences1.html");
                 
                 WebView laws2Web = new WebView();
                 WebEngine laws2Engine = laws2Web.getEngine();
-                laws2Engine.load("file:///C:/Users/Bryce/Documents/NetbeansProjects/TruthTableGenerator/src/resources/LogicalEquivalences2.html");
+                laws2Engine.load("file:///C:\\Users/McAllister/Desktop/School/Java/TruthTableGenerator/src/resources/LogicalEquivalences2.html");
                 
 		BorderPane pane = new BorderPane();
 		//FileIO f = new FileIO();
@@ -316,6 +316,8 @@ public class GUI extends Application {
 				outputDisplaySpeed = "Instant";
 				displaySpeedButton.setGraphic(
 					new ImageView(ImageGetter.getTeXImage("instant \\leftarrow Step")));
+				
+				submitExpression(false);
 			}
 		});
 		
@@ -365,9 +367,7 @@ public class GUI extends Application {
 				outputMode = "Compact";
 				modeButton.setGraphic(
 				new ImageView(ImageGetter.getTeXImage("Compact \\leftarrow Full")));
-				if (outputResponseSpeed.equals("Dynamic")) {
-					submitExpression(false);
-				}
+				submitExpression(false);
 			}
 		});
 		
@@ -377,9 +377,7 @@ public class GUI extends Application {
 				outputMode = "Full";
 				modeButton.setGraphic(
 				new ImageView(ImageGetter.getTeXImage("Compact \\rightarrow Full")));
-				if (outputResponseSpeed.equals("Dynamic")) {
-					submitExpression(false);
-				}
+				submitExpression(false);
 			}
 		});
 		batch.setOnAction(new EventHandler<ActionEvent>() {
@@ -490,9 +488,7 @@ public class GUI extends Application {
 					modeButton.setGraphic(
 							new ImageView(ImageGetter.getTeXImage("Compact \\rightarrow Full")));
 				}				
-				if (outputResponseSpeed.equals("Dynamic")) {
 					submitExpression(false);
-				}
 				expression.requestFocus();
 				expression.deselect(); 
 				expression.positionCaret(caretLocation);
