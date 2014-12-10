@@ -316,6 +316,8 @@ public class GUI extends Application {
 				outputDisplaySpeed = "Instant";
 				displaySpeedButton.setGraphic(
 					new ImageView(ImageGetter.getTeXImage("instant \\leftarrow Step")));
+				
+				submitExpression(false);
 			}
 		});
 		
