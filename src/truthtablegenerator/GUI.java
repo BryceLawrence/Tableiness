@@ -842,7 +842,6 @@ public class GUI extends Application {
 				column.setGraphic(
 					new ImageView(ImageGetter.getTeXImage(head)));
 				}
-				
 				column.setCellValueFactory(new Callback<CellDataFeatures<Row, String>, ObservableValue<String>>() {
 					public ObservableValue<String> call(CellDataFeatures<Row, String> r) {
 						// r.getValue() returns the Row instance for a particular TableView row
