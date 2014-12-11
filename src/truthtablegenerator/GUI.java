@@ -850,8 +850,8 @@ public class GUI extends Application {
 				tableView.getColumns().add(column); 
 			}
 			tableView.setItems(tableRowList);
-			tableArea.setPadding(new Insets(7,0,0,0));
 		}
+		tableArea.setPadding(new Insets(7,0,0,0));
 		tableArea.setCenter(tableView);
 	}
 
@@ -877,7 +877,7 @@ private void makeCenterArea() {
 	@Override
 	public void start(Stage primaryStage) {
 		caretLocation = 0;
-		
+	
 		primaryStage.getIcons().add(new Image(this.getClass().getResource("/resources/icon.png").toString()));
                 
                 //Locks window to a minimum size
