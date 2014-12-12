@@ -7,7 +7,8 @@ import javafx.beans.property.StringProperty;
 
 /**
  * A class that holds a row from the truth table
- * @author McAllister
+ * 
+ * @author Bryce, McAllister, Tyler
  */
 public class Row {
 

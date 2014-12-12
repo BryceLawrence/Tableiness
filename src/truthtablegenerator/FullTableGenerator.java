@@ -5,6 +5,8 @@ import java.util.List;
 
 /**
  * Creates tables from logical expressions
+ * 
+ * @author Bryce, McAllister, Tyler
  */
 public class FullTableGenerator {
 

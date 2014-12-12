@@ -2,7 +2,8 @@ package truthtablegenerator;
 
 /**
  * An exception class used to pass error messages
- * @author Bryce
+ * 
+ * @author Bryce, McAllister, Tyler
  */
 public class ValidationException extends Exception {
 

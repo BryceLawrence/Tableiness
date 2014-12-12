@@ -8,6 +8,8 @@ import java.util.List;
 /**
  * The Expression class. Holds the entered Expression, validates it, and does
  * boolean algebra on it. A Singleton Class.
+ * 
+ * @author Bryce, McAllister, Tyler
  */
 public class Expression {
 

@@ -3,7 +3,7 @@ package truthtablegenerator;
 /**
  * Used for converting a string to an TeX version of that string.
  *
- * @author Bryce
+ * @author Bryce, McAllister, Tyler
  */
 public class LaTeXConverter {
 

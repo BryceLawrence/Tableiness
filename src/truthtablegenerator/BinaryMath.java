@@ -2,6 +2,8 @@ package truthtablegenerator;
 
 /**
  * Collection of binary math operators.
+ * 
+ * @author Bryce, McAllister, Tyler
  */
 public class BinaryMath {
 

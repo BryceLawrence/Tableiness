@@ -5,6 +5,8 @@ import java.util.List;
 
 /**
  * Creates tables from logical expressions
+ * 
+ * @author Bryce, McAllister, Tyler
  */
 public class CompactTableGenerator {
 
@@ -67,6 +69,12 @@ public class CompactTableGenerator {
 					}
 				}
 				binaryCounter--;
+			}
+			if (expression.charAt(i) == '0') {
+				compactTable.get(step + 1).set(i, "0");
+			}
+			if (expression.charAt(i) == '1') {
+				compactTable.get(step + 1).set(i, "1");
 			}
 		}
 

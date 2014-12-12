@@ -41,6 +41,8 @@ import javafx.util.Callback;
 
 /**
  * TruthTable FX class
+ * 
+ * @author Bryce, McAllister, Tyler
  */
 public class GUI extends Application {
 
