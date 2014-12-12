@@ -749,7 +749,9 @@ public class GUI extends Application {
 			} catch (ValidationException ex) {
 				// if the function caller was from the evaluate button then tell them what they did wrong, if it was from dynamic
 				// update then dont show errors. 
-				createErrorBox(ex.getMessage());
+				if (showErrors){
+					createErrorBox(ex.getMessage());
+				}
 			}
 		}
 
