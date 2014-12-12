@@ -1,10 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package truthtablegenerator;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,44 +7,40 @@ import java.util.List;
  * Creates tables from logical expressions
  */
 public class FullTableGenerator {
-	private List<List <String>> fullTable = new ArrayList<>();
-	private List<Integer> displayOrder = new ArrayList<>();
-	
+
+	private List<List<String>> fullTable = new ArrayList<>();
 	/**
 	 * Makes the full fullTable row by row
 	 */
 	private void makeFullTable() {
-		int tableSize = (int) Math.pow(2 ,Expression.getVariableCount());
-		displayOrder.clear();
+		int tableSize = (int) Math.pow(2, Expression.getVariableCount());
 		fullTable.clear();
 		fullTable.add(Expression.getFullExpression());
-		for(int i = 0; i < tableSize; i++) {
+		for (int i = 0; i < tableSize; i++) {
 			calcRow(i);
 		}
-		for (int i = 0; i < fullTable.get(0).size(); i ++) {
-			displayOrder.add(i);
-		}
 	}
-	
+
 	/**
 	 * Calculates a single row, and adds its result to the fullTable
+	 *
 	 * @param step the current row being calculated
 	 */
 	public void calcRow(int step) {
 		int variableCount = Expression.getVariableCount();
-		
+
 		String binaryStep = Integer.toBinaryString(step);
 		while (binaryStep.length() < variableCount) {
-			binaryStep = "0" + binaryStep;
+			binaryStep = "0" + binaryStep; // " step 2 = '10' but if i have 3 steps i need '010'
 		}
-		
-		List <String> steps = new ArrayList<>(Expression.getFullExpression());
+
+		List<String> steps = new ArrayList<>(Expression.getFullExpression());
 		List<Integer> results = new ArrayList<>();
-		
+
 		for (int i = 0; i < variableCount; i++) {
 			results.add(Integer.parseInt(Character.toString(binaryStep.charAt(i))));
 		}
-		
+
 		for (int i = variableCount; i < steps.size(); i++) {
 			String currentStep = steps.get(i);
 			for (int j = 0; j < variableCount; j++) {
@@ -58,21 +48,22 @@ public class FullTableGenerator {
 			}
 			results.add(Integer.parseInt(calcStep(currentStep)));
 		}
-		List<String> stringResults  = new ArrayList<>();
+		List<String> stringResults = new ArrayList<>();
 		for (int r : results) {
 			stringResults.add(Integer.toString(r));
 		}
 		fullTable.add(stringResults);
 	}
-	
+
 	/**
 	 * Calculates a single step. Recursively calculates parenthetical steps
+	 *
 	 * @param step the step to calculate
-	 * @return 
+	 * @return the string result
 	 */
 	public String calcStep(String step) {
 		int endPoint = 0;
-		for (int i = 0; i < step.length(); i ++) {
+		for (int i = 0; i < step.length(); i++) {
 			if (step.charAt(i) == '(') {
 				int parCount = 1;
 				int skip = 1;
@@ -84,8 +75,8 @@ public class FullTableGenerator {
 						parCount--;
 					}
 				}
-				step =  step.substring(0, i) + calcStep(step.substring(i + 1, i + skip - 1)) + step.substring(i + skip);
-			} 
+				step = step.substring(0, i) + calcStep(step.substring(i + 1, i + skip - 1)) + step.substring(i + skip);
+			}
 		}
 		endPoint = step.length();
 		for (int i = 0; i < endPoint; i++) {
@@ -97,7 +88,7 @@ public class FullTableGenerator {
 		}
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '*') {
-				step = step.substring(0, i - 1) + BinaryMath.and(Character.getNumericValue(step.charAt(i - 1)), 
+				step = step.substring(0, i - 1) + BinaryMath.and(Character.getNumericValue(step.charAt(i - 1)),
 						Character.getNumericValue(step.charAt(i + 1))) + step.substring(i + 2);
 				i -= 2;
 				endPoint -= 2;
@@ -105,7 +96,7 @@ public class FullTableGenerator {
 		}
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '+') {
-				step = step.substring(0, i - 1) + BinaryMath.or(Character.getNumericValue(step.charAt(i - 1)), 
+				step = step.substring(0, i - 1) + BinaryMath.or(Character.getNumericValue(step.charAt(i - 1)),
 						Character.getNumericValue(step.charAt(i + 1))) + step.substring(i + 2);
 				i -= 2;
 				endPoint -= 2;
@@ -113,7 +104,7 @@ public class FullTableGenerator {
 		}
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '>') {
-				step = step.substring(0, i - 1) + BinaryMath.implies(Character.getNumericValue(step.charAt(i - 1)), 
+				step = step.substring(0, i - 1) + BinaryMath.implies(Character.getNumericValue(step.charAt(i - 1)),
 						Character.getNumericValue(step.charAt(i + 1))) + step.substring(i + 2);
 				i -= 2;
 				endPoint -= 2;
@@ -129,25 +120,17 @@ public class FullTableGenerator {
 		}
 		return step;
 	}
-	
+
 	/**
-	 * Generates the full table and then returns it.
-	 * The fullTable is a two dimensional List, or a list of lists broken up by ROWS of elements
-	 * the first row is the expression, broken down to individual Steps,
-	 * the rest of the rows are the results one line at a time.
+	 * Generates the full table and then returns it. The fullTable is a two
+	 * dimensional List, or a list of lists broken up by ROWS of elements the
+	 * first row is the expression, broken down to individual Steps, the rest of
+	 * the rows are the results one line at a time.
+	 *
 	 * @return fullTable
 	 */
 	public List<List<String>> getTable() {
 		makeFullTable();
 		return fullTable;
 	}
-	
-	/**
-	 * Gets the order to display the table in.
-	 * @return displayOrder
-	 */
-	public List<Integer> getDisplayOrder() {
-		return displayOrder;
-	}
 }
-
