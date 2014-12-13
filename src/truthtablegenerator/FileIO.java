@@ -94,16 +94,16 @@ public class FileIO {
 		try {
 			writer = new FileWriter(fileName);
 			PrintWriter fout = new PrintWriter(writer);
-			fout.println("*****************");
-			fout.println("*  FULL TABLE   *");
-			fout.println("*****************");
+			fout.println("%");
+			fout.println("% FULL TABLE");
+			fout.println("%");
 			fout.println();
 
 			writeTable(fout, compact);
 
-			fout.println("*****************");
-			fout.println("* COMPACT TABLE *");
-			fout.println("*****************");
+			fout.println("%");
+			fout.println("% COMPACT TABLE");
+			fout.println("%");
 			fout.println();
 
 			writeTable(fout, full);
