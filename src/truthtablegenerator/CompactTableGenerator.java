@@ -109,17 +109,20 @@ public class CompactTableGenerator {
 				String parStep = calcStep(step.substring(i + 1, i + skip - 1), i + 1 + s, row);
 				String result = Character.toString(parStep.charAt(0));
 				parStep += result + result; //the expression is all the same number. 
+				System.out.println(parStep);
 				//add two more of that number to account for the parentheses
 				step = step.substring(0, i) + parStep + step.substring(i + skip);
 			}
 		}
 		String expression = Expression.getCompactExpression();
 		endPoint = step.length();
+		int lastStep = 0;
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '~') {
 				String result = Integer.toString(BinaryMath.not(Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i) + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				lastStep = i;
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -128,6 +131,7 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				lastStep = i;
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -136,6 +140,7 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				lastStep = i;
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -144,6 +149,7 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				lastStep = i;
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -152,9 +158,14 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				lastStep = i;
 			}
 		}
-		return step;
+		String replacedStep = "";
+		for (int i = 0; i < step.length(); i++) {
+			replacedStep += step.charAt(lastStep);
+		}
+		return replacedStep;
 	}
 
 	/**
