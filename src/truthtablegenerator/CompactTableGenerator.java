@@ -109,7 +109,6 @@ public class CompactTableGenerator {
 				String parStep = calcStep(step.substring(i + 1, i + skip - 1), i + 1 + s, row);
 				String result = Character.toString(parStep.charAt(0));
 				parStep += result + result; //the expression is all the same number. 
-				System.out.println(parStep);
 				//add two more of that number to account for the parentheses
 				step = step.substring(0, i) + parStep + step.substring(i + skip);
 			}
