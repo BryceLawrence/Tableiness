@@ -67,7 +67,7 @@ public class FileIO {
 		try {
 			writer = new FileWriter(fileName);
 			PrintWriter fout = new PrintWriter(writer);
-			fout.printf(expression, null);
+			fout.printf(expression,(Object) null);
 		} catch (IOException e) {
 			System.out.println("ERROR writing files");
 		} finally {
