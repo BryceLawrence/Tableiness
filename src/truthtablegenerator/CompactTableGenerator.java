@@ -115,11 +115,13 @@ public class CompactTableGenerator {
 		}
 		String expression = Expression.getCompactExpression();
 		endPoint = step.length();
+		int lastStep = 0;
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '~') {
 				String result = Integer.toString(BinaryMath.not(Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i) + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				lastStep = i;
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -128,6 +130,7 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				lastStep = i;
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -136,6 +139,7 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				lastStep = i;
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -144,6 +148,7 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				lastStep = i;
 			}
 		}
 		for (int i = 0; i < endPoint; i++) {
@@ -152,9 +157,14 @@ public class CompactTableGenerator {
 						Character.getNumericValue(step.charAt(i + 1))));
 				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
 				compactTable.get(row).set(i + s, result);
+				lastStep = i;
 			}
 		}
-		return step;
+		String replacedStep = "";
+		for (int i = 0; i < step.length(); i++) {
+			replacedStep += step.charAt(lastStep);
+		}
+		return replacedStep;
 	}
 
 	/**
