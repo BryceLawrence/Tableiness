@@ -902,7 +902,7 @@ public class GUI extends Application {
 		primaryStage.setTitle("Truth Table Generator");
 		Scene scene = new Scene(root, 600, 600);
 
-		scene.getStylesheets().add(this.getClass().getResource("/truthtablegenerator/newstyle.css").toString());
+		scene.getStylesheets().add(this.getClass().getResource("/resources/newstyle.css").toString());
 		scene.getAccelerators().put(
 				new KeyCodeCombination(KeyCode.ENTER, KeyCombination.SHORTCUT_ANY),
 				new Runnable() {
