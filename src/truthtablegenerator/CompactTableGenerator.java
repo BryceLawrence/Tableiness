@@ -58,7 +58,6 @@ public class CompactTableGenerator {
 		}
 
 		int binaryCounter = binaryStep.length() - 1;
-		int expLength = expression.length();
 		for (int i = expression.length() - 1; i >= 0; i--) {
 			if (Character.isLetter(expression.charAt(i))) {
 				Character c = expression.charAt(i);
@@ -87,8 +86,9 @@ public class CompactTableGenerator {
 	/**
 	 * Calculates a single step. Recursively calculates parenthetical steps
 	 *
-	 * @param startPoint the point to start the search. used for recursive calls.
-	 * initial call should be 0.
+	 * @param step the step to evaluate
+	 * @param s where to skip to when working on parenthetical steps
+	 * @param row which row we are working on
 	 * @param step the step to calculate
 	 * @return string (used for recursion. not needed for original call.
 	 */
@@ -113,14 +113,14 @@ public class CompactTableGenerator {
 				step = step.substring(0, i) + parStep + step.substring(i + skip);
 			}
 		}
-		String expression = Expression.getCompactExpression();
+		// 
 		endPoint = step.length();
 		int lastStep = 0;
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '~') {
 				String result = Integer.toString(BinaryMath.not(Character.getNumericValue(step.charAt(i + 1))));
-				step = step.substring(0, i) + result + result + step.substring(i + 2);
-				compactTable.get(row).set(i + s, result);
+				step = step.substring(0, i) + result + result + step.substring(i + 2); //replace the operator and variable with their result twice.
+				compactTable.get(row).set(i + s, result); // i+s is where you are in the whole step. set that spot in the row to the result
 				lastStep = i;
 			}
 		}
@@ -160,10 +160,12 @@ public class CompactTableGenerator {
 				lastStep = i;
 			}
 		}
+		//create a string that is the same length but only the last steps result
 		String replacedStep = "";
 		for (int i = 0; i < step.length(); i++) {
 			replacedStep += step.charAt(lastStep);
 		}
+		//return the new string
 		return replacedStep;
 	}
 
