@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -123,10 +124,11 @@ public class GUI extends Application {
 		Button hints = new Button("Hints");
 		Button laws = new Button("Logical Equivalences 1");
 		Button lawsConditional = new Button("Logical Equivalences 2");
+		Button about = new Button("About");
 		Button close = new Button("Close");
 		HBox helpButtonsRow = new HBox();
 
-		helpButtonsRow.getChildren().addAll(terms, rules, hints, laws, lawsConditional, close);
+		helpButtonsRow.getChildren().addAll(terms, rules, hints, laws, lawsConditional, about, close);
 
 		// Stuff to turn help into HTML view
 		WebView termsWeb = new WebView();
@@ -148,6 +150,10 @@ public class GUI extends Application {
 		WebView laws2Web = new WebView();
 		WebEngine laws2Engine = laws2Web.getEngine();
 		laws2Engine.load(this.getClass().getResource("/resources/LogicalEquivalences2.html").toString());
+		
+		WebView aboutWeb = new WebView();
+		WebEngine aboutEngine = aboutWeb.getEngine();
+		aboutEngine.load(this.getClass().getResource("/resources/About.html").toString());
 
 		BorderPane pane = new BorderPane();
 		pane.setTop(helpButtonsRow);
@@ -181,6 +187,12 @@ public class GUI extends Application {
 			@Override
 			public void handle(ActionEvent e) {
 				pane.setCenter(laws2Web);
+			}
+		});
+		about.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				pane.setCenter(aboutWeb);
 			}
 		});
 		close.setOnAction(new EventHandler<ActionEvent>() {
@@ -312,7 +324,12 @@ public class GUI extends Application {
 		exit.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent t) {
-				primaryStage.close();
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						primaryStage.close();
+					}
+				});
 			}
 		});
 		//end file event handling
