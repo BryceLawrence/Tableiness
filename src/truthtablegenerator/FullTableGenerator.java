@@ -65,6 +65,7 @@ public class FullTableGenerator {
 	 */
 	public String calcStep(String step) {
 		int endPoint = 0;
+		//find all outer parenthetical steps ( ...(...)...) only care about outside set
 		for (int i = 0; i < step.length(); i++) {
 			if (step.charAt(i) == '(') {
 				int parCount = 1;
@@ -77,10 +78,14 @@ public class FullTableGenerator {
 						parCount--;
 					}
 				}
+				//evaluate that parenthetical step
 				step = step.substring(0, i) + calcStep(step.substring(i + 1, i + skip - 1)) + step.substring(i + skip);
 			}
 		}
+		//how big is the string
 		endPoint = step.length();
+		
+		// replace all not expressions (! and variable/constant) with what they evaluate. move i back and reduce endpoint by one to account for the missing character ("!1" -> "0")
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '~') {
 				step = step.substring(0, i) + BinaryMath.not(Character.getNumericValue(step.charAt(i + 1))) + step.substring(i + 2);
@@ -88,6 +93,8 @@ public class FullTableGenerator {
 				endPoint -= 1;
 			}
 		}
+		//next steps folow order of operations and or imply then iff
+		// replace all binary expressions (1 * 1) with what they evaluate. move i back and reduce endpoint by TWO to account for the missing character ("1*0" -> "0")
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '*') {
 				step = step.substring(0, i - 1) + BinaryMath.and(Character.getNumericValue(step.charAt(i - 1)),
