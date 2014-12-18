@@ -12,9 +12,13 @@ import java.util.List;
  * @author Bryce, McAllister, Tyler
  */
 public class Expression {
-
-	private static final int MAX_VARIABLES = 6;
-	private static final Expression expression = new Expression(); // Eager singleton, NOT threadsafe
+	
+	private static final boolean CAP_VARIABLES = true;
+	private static final int MAX_VARIABLES = 13;
+	// a note about max variables. this program can thoerticaly handle 26 variables (the whole alphabet)
+	// BUT it takes up too much memory, to store the 67108864 rows of the truth table. Also there is the issue of time
+	// each new variable roughly doubles the time the program takes to generate the table. 
+	private static final Expression expression = new Expression(); // Eager singleton
 	private static String enteredExpression = null;
 	private static String workableExpression = null;
 	private static int variableCount = 0;
@@ -61,6 +65,7 @@ public class Expression {
 			workableExpression = workableExpression.replaceAll("not", "~");
 			workableExpression = workableExpression.replaceAll("\\s", ""); //remove spaces
 			workableExpression = "@" + workableExpression + "@"; // used for validation to prevent null pointer issues
+			variables.clear();// need fresh empty list for max variables to work.
 			// removed in getParentheticalSteps
 		}
 	}
@@ -133,7 +138,6 @@ public class Expression {
 		int parCount = 0;
 		char checking;
 		char RHS;
-
 		for (pos = 0; pos < workableExpression.length(); pos++) {
 			checking = workableExpression.charAt(pos);
 			//end of string
@@ -148,7 +152,9 @@ public class Expression {
 
 			// Main body of verification
 			if (Character.isLetter(checking)) {
-				addToVariables(checking);
+				if (CAP_VARIABLES) {
+					addToVariables(checking);
+				}
 				if (pos > 0 && RHS == ')' && workableExpression.charAt(pos - 1) == '(') {
 					throw new ValidationException("Unneeded parentheses around variable at: " + pos);
 				}
@@ -229,7 +235,7 @@ public class Expression {
 		}
 		variables.add(var);
 		if (variables.size() > MAX_VARIABLES) {
-			throw new ValidationException("You have more than 6 variables");
+			throw new ValidationException("You have more than " + MAX_VARIABLES + " variables");
 		}
 	}
 
