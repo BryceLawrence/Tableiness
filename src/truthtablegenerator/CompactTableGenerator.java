@@ -119,7 +119,8 @@ public class CompactTableGenerator {
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '~') {
 				String result = Integer.toString(BinaryMath.not(Character.getNumericValue(step.charAt(i + 1))));
-				step = step.substring(0, i) + result + result + step.substring(i + 2); //replace the operator and variable with their result twice.
+				String rightResult = getRightStringResult(step, i, result.charAt(0));
+				step = step.substring(0, i) + result + result + step.substring(i + rightResult.length() + 1); //replace the operator and variable with their result twice.
 				compactTable.get(row).set(i + s, result); // i+s is where you are in the whole step. set that spot in the row to the result
 				lastStep = i;
 			}
@@ -128,7 +129,9 @@ public class CompactTableGenerator {
 			if (step.charAt(i) == '*') {
 				String result = Integer.toString(BinaryMath.and(Character.getNumericValue(step.charAt(i - 1)),
 						Character.getNumericValue(step.charAt(i + 1))));
-				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
+				String rightResult = getRightStringResult(step, i, result.charAt(0));
+				String leftResult = getLeftStringResult(step, i, result.charAt(0));
+				step = step.substring(0, i - leftResult.length()) + leftResult + result + rightResult + step.substring(i + rightResult.length() + 1);
 				compactTable.get(row).set(i + s, result);
 				lastStep = i;
 			}
@@ -137,7 +140,9 @@ public class CompactTableGenerator {
 			if (step.charAt(i) == '+') {
 				String result = Integer.toString(BinaryMath.or(Character.getNumericValue(step.charAt(i - 1)),
 						Character.getNumericValue(step.charAt(i + 1))));
-				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
+				String rightResult = getRightStringResult(step, i, result.charAt(0));
+				String leftResult = getLeftStringResult(step, i, result.charAt(0));
+				step = step.substring(0, i - leftResult.length()) + leftResult + result + rightResult + step.substring(i + rightResult.length() + 1);
 				compactTable.get(row).set(i + s, result);
 				lastStep = i;
 			}
@@ -146,7 +151,9 @@ public class CompactTableGenerator {
 			if (step.charAt(i) == '>') {
 				String result = Integer.toString(BinaryMath.implies(Character.getNumericValue(step.charAt(i - 1)),
 						Character.getNumericValue(step.charAt(i + 1))));
-				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
+				String rightResult = getRightStringResult(step, i, result.charAt(0));
+				String leftResult = getLeftStringResult(step, i, result.charAt(0));
+				step = step.substring(0, i - leftResult.length()) + leftResult + result + rightResult + step.substring(i + rightResult.length() + 1);
 				compactTable.get(row).set(i + s, result);
 				lastStep = i;
 			}
@@ -155,7 +162,9 @@ public class CompactTableGenerator {
 			if (step.charAt(i) == '<') {
 				String result = Integer.toString(BinaryMath.iff(Character.getNumericValue(step.charAt(i - 1)),
 						Character.getNumericValue(step.charAt(i + 1))));
-				step = step.substring(0, i - 1) + result + result + result + step.substring(i + 2);
+				String rightResult = getRightStringResult(step, i, result.charAt(0));
+				String leftResult = getLeftStringResult(step, i, result.charAt(0));
+				step = step.substring(0, i - leftResult.length()) + leftResult + result + rightResult + step.substring(i + rightResult.length() + 1);
 				compactTable.get(row).set(i + s, result);
 				lastStep = i;
 			}
@@ -167,6 +176,31 @@ public class CompactTableGenerator {
 		}
 		//return the new string
 		return replacedStep;
+	}
+	
+	private String getLeftStringResult(String step, int pos, char value) {
+		String result = "";
+		pos--; // the initial position is already taken care of
+		for (; pos >= 0; pos--) {
+			if (step.charAt(pos) != '0' && step.charAt(pos) != '1') {
+				break;
+			}
+			result += value;
+		}
+		return result;
+	}
+	
+	private String getRightStringResult(String step, int pos, char value) {
+		String result = "";
+		pos++; // the initial position is already taken care of
+		int max = step.length();
+		for (; pos < max; pos++) {
+			if (step.charAt(pos) != '0' && step.charAt(pos) != '1') {
+				break;
+			}
+			result += value;
+		}
+		return result;
 	}
 
 	/**
