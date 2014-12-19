@@ -93,6 +93,7 @@ public class FullTableGenerator {
 				endPoint -= 1;
 			}
 		}
+		
 		//next steps folow order of operations and or imply then iff
 		// replace all binary expressions (1 * 1) with what they evaluate. move i back and reduce endpoint by TWO to account for the missing character ("1*0" -> "0")
 		for (int i = 0; i < endPoint; i++) {
