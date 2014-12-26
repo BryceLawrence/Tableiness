@@ -87,9 +87,8 @@ public class CompactTableGenerator {
 	 * Calculates a single step. Recursively calculates parenthetical steps
 	 *
 	 * @param step the step to evaluate
-	 * @param s where to skip to when working on parenthetical steps
+	 * @param s where to skip to when working on parenthetical steps. Should be 0 except for when called recursively
 	 * @param row which row we are working on
-	 * @param step the step to calculate
 	 * @return string (used for recursion. not needed for original call.
 	 */
 	public String calcStep(String step, int s, int row) {
@@ -116,12 +115,28 @@ public class CompactTableGenerator {
 		// 
 		endPoint = step.length();
 		int lastStep = 0;
+		/*	
+			the strings rightResult and leftResult are used to deal with order of operations so that i can replace the whole segment, and still maintain the same length string 
+			they consist of a string of the same character (the result) that is the same lenght as the distance from the operator to the nearest edge of the equation or the 
+			nearest non evaluated operator(all evaluated operators are replaced with their result so they look just like variables at this point)
+			this allows a+b*c+d to be read as:		b*c then a+111 then 22222+d  equals 3333333(1 and 2 being the results for step 1 and step 2)
+			instead of :										b*c then a+111 then 22211+d	equals 2221333 (in this case the second + was only able to read the
+				original * result since the first + didnt reach to the next unevaluated operator) 
+			step #3 evaluates corect in the first example and very wrong in the second
+			
+			5 for loops check for all operators of a certain type, this keeps order of operations as each step only handles one type of operator.
+			the was this works is to replace the string with a new string that is the :
+			(original leftside minus the LHS of the operator being evaluated [except for NOTs]) + (the LHS) + (result of the operation) + (the RHS) + (original Reftside minus the RHS of the operator being evaluated [including for NOTs])
+			then the spot where the operator was in the current row being evaluated is set to the result (IMPORTANT this is why the string must always be the same lenght. if not, then the result would be put in the wrong column)
+			set the lastStep variable to the current place so that that result can be returned (useful for parenthetical steps)
+			then move on to the next operator. if end of loop move on to next operator type.
+		*/
 		for (int i = 0; i < endPoint; i++) {
 			if (step.charAt(i) == '~') {
 				String result = Integer.toString(BinaryMath.not(Character.getNumericValue(step.charAt(i + 1))));
 				String rightResult = getRightStringResult(step, i, result.charAt(0));
 				step = step.substring(0, i) + result + rightResult + step.substring(i + rightResult.length() + 1); //replace the operator and variable with their result twice.
-				compactTable.get(row).set(i + s, result); // i+s is where you are in the whole step. set that spot in the row to the result
+				compactTable.get(row).set(i + s, result); // i+s is where you are in the whole step. set that spot in the row to the result (note S should be 0 unless you are in a parenthetical substep)
 				lastStep = i;
 			}
 		}
