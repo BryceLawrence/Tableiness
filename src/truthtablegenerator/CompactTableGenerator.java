@@ -120,7 +120,7 @@ public class CompactTableGenerator {
 			if (step.charAt(i) == '~') {
 				String result = Integer.toString(BinaryMath.not(Character.getNumericValue(step.charAt(i + 1))));
 				String rightResult = getRightStringResult(step, i, result.charAt(0));
-				step = step.substring(0, i) + result + result + step.substring(i + rightResult.length() + 1); //replace the operator and variable with their result twice.
+				step = step.substring(0, i) + result + rightResult + step.substring(i + rightResult.length() + 1); //replace the operator and variable with their result twice.
 				compactTable.get(row).set(i + s, result); // i+s is where you are in the whole step. set that spot in the row to the result
 				lastStep = i;
 			}
